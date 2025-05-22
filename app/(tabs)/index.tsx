@@ -16,7 +16,7 @@ export default function HomeScreen() {
 
             <Text style={styles.title}>Let’s start the Yuno <Text style={styles.ai}>AI</Text></Text>
             <Text style={styles.subtitle}>
-                Connect with PFH and get support securely and privately!
+                Lost at PFH? Don’t worry, Yuno's got your back!
             </Text>
 
             <View style={styles.buttonContainer}>
