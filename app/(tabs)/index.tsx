@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     logo: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#FFE600',
+        color: '#133b89',
         marginBottom: 20,
     },
     botImage: {
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     ai: {
-        backgroundColor: '#FFE600',
+        backgroundColor: '#133b89',
         color: '#000',
         paddingHorizontal: 6,
         borderRadius: 4,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     registerButton: {
-        backgroundColor: '#FFE600',
+        backgroundColor: '#133b89',
         paddingVertical: 12,
         paddingHorizontal: 25,
         borderRadius: 10,
