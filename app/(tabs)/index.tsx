@@ -40,7 +40,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
@@ -59,19 +59,19 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#000',
         marginBottom: 10,
     },
     ai: {
         backgroundColor: '#133b89',
-        color: '#000',
+        color: '#fff',
         paddingHorizontal: 6,
         borderRadius: 4,
         overflow: 'hidden',
     },
     subtitle: {
         fontSize: 14,
-        color: 'lightgray',
+        color: 'gray',
         textAlign: 'center',
         marginBottom: 30,
     },
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     loginButton: {
-        borderColor: '#fff',
+        borderColor: '#000',
         borderWidth: 2,
         paddingVertical: 12,
         paddingHorizontal: 25,
@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
     registerText: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#000',
+        color: '#fff',
     },
     loginText: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#000',
     },
 });
