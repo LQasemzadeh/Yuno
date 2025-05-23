@@ -38,22 +38,22 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#000' },
-    title: { fontSize: 24, fontWeight: 'bold', color: '#FFE600', marginBottom: 30 },
+    container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#fff' },
+    title: { fontSize: 24, fontWeight: 'bold', color: '#133b89', marginBottom: 30 },
     input: {
         width: '100%',
         padding: 15,
         borderWidth: 1,
         borderColor: '#555',
         borderRadius: 10,
-        color: '#fff',
+        color: '#000',
         marginBottom: 20,
     },
     button: {
-        backgroundColor: '#FFE600',
+        backgroundColor: '#133b89',
         paddingVertical: 15,
         paddingHorizontal: 50,
         borderRadius: 10,
     },
-    buttonText: { color: '#000', fontWeight: 'bold', fontSize: 16 },
+    buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 });
