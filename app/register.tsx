@@ -4,11 +4,17 @@ import { useRouter } from 'expo-router';
 
 export default function RegisterScreen() {
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const router = useRouter();
 
     const handleRegister = () => {
         if (!email.endsWith('@student.pfh.de')) {
             Alert.alert('Invalid Email', 'Please use your PFH student email.');
+            return;
+        }
+
+        if (password.length < 6) {
+            Alert.alert('Weak Password', 'Password must be at least 6 characters.');
             return;
         }
 
@@ -28,6 +34,15 @@ export default function RegisterScreen() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#aaa"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
             />
 
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
