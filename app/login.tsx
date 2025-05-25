@@ -28,7 +28,7 @@ export default function LoginScreen() {
         }
 
         Alert.alert('Login Success', 'Welcome back!');
-        router.push('/(tabs)/chat');
+        router.push('/(tabs)/chat'); // Go to chatbot screen after login
     };
 
     return (
@@ -63,6 +63,15 @@ export default function LoginScreen() {
                 </TouchableOpacity>
             </View>
 
+            <TouchableOpacity
+                onPress={() =>
+                    Alert.alert('Coming Soon', 'Password reset feature will be available soon.')
+                }
+                style={styles.forgotPassword}
+            >
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
@@ -73,17 +82,17 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1, justifyContent: 'center', alignItems: 'center',
-        padding: 20, backgroundColor: '#fff'
+        padding: 20, backgroundColor: '#fff',
     },
     title: {
         fontSize: 24, fontWeight: 'bold',
-        color: '#133b89', marginBottom: 30
+        color: '#133b89', marginBottom: 30,
     },
     input: {
         width: '100%', padding: 15,
         borderWidth: 1, borderColor: '#555',
         borderRadius: 10, color: '#000',
-        marginBottom: 20
+        marginBottom: 20,
     },
     passwordContainer: {
         flexDirection: 'row',
@@ -92,13 +101,23 @@ const styles = StyleSheet.create({
         borderColor: '#555',
         borderRadius: 10,
         paddingHorizontal: 10,
-        marginBottom: 20,
+        marginBottom: 10,
         width: '100%',
     },
     passwordInput: {
         flex: 1,
         padding: 15,
         color: '#000',
+    },
+    forgotPassword: {
+        alignSelf: 'flex-end',
+        marginBottom: 20,
+    },
+    forgotPasswordText: {
+        color: '#133b89',
+        textDecorationLine: 'underline',
+        fontSize: 14,
+        fontWeight: '500',
     },
     button: {
         backgroundColor: '#133b89',
@@ -108,6 +127,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff', fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
     },
 });
