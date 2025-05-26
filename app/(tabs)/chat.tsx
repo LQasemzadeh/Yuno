@@ -1,111 +1,106 @@
-import { useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
     TextInput,
+    StyleSheet,
     TouchableOpacity,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet
 } from 'react-native';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from 'expo-router';
 
-export default function ChatScreen() {
-    const [messages, setMessages] = useState([
-        { id: '1', sender: 'bot', text: '🚀 Thanks for reaching out to Yuno Support! What can I help you with?' }
-    ]);
-    const [input, setInput] = useState('');
+const Chat = () => {
+    const navigation = useNavigation();
 
-    const sendMessage = () => {
-        if (input.trim() === '') return;
-        const newMessage = {
-            id: Date.now().toString(),
-            sender: 'user',
-            text: input
+    useEffect(() => {
+        // Hide bottom tab bar when entering this screen
+        navigation.getParent()?.setOptions({
+            tabBarStyle: { display: 'none' },
+        });
+
+        // Show tab bar again when leaving this screen
+        return () => {
+            navigation.getParent()?.setOptions({
+                tabBarStyle: { display: 'flex' },
+            });
         };
-        setMessages([...messages, newMessage]);
-        setInput('');
-    };
-
-    const renderItem = ({ item }: any) => (
-        <View
-            style={[
-                styles.messageBubble,
-                item.sender === 'user' ? styles.userBubble : styles.botBubble
-            ]}
-        >
-            <Text style={styles.messageText}>{item.text}</Text>
-        </View>
-    );
+    }, [navigation]);
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={80}
-        >
-            <FlatList
-                data={messages}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.chatContainer}
-            />
-            <View style={styles.inputContainer}>
+        <View style={styles.container}>
+            {/* Header */}
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Chat with AI Bot</Text>
+            </View>
+
+            {/* Empty Chat Area */}
+            <View style={styles.chatArea} />
+
+            {/* Input Bar */}
+            <View style={styles.inputBar}>
+                <TouchableOpacity>
+                    <Ionicons name="attach" size={20} color="#666" />
+                </TouchableOpacity>
+
                 <TextInput
                     style={styles.textInput}
-                    value={input}
-                    onChangeText={setInput}
-                    placeholder="Ask a question..."
+                    placeholder="Type your message..."
                     placeholderTextColor="#999"
                 />
-                <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>↑</Text>
+
+                <TouchableOpacity style={styles.iconButton}>
+                    <Ionicons name="mic" size={20} color="#666" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.iconButton}>
+                    <FontAwesome name="send" size={20} color="#666" />
                 </TouchableOpacity>
             </View>
-        </KeyboardAvoidingView>
+        </View>
     );
-}
+};
+
+export default Chat;
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
-    chatContainer: { padding: 10 },
-    messageBubble: {
-        maxWidth: '75%',
-        padding: 10,
-        borderRadius: 15,
-        marginVertical: 4,
-    },
-    userBubble: {
-        backgroundColor: '#DCF8C6',
-        alignSelf: 'flex-end',
-    },
-    botBubble: {
-        backgroundColor: '#E5E5EA',
-        alignSelf: 'flex-start',
-    },
-    messageText: { fontSize: 16 },
-    inputContainer: {
-        flexDirection: 'row',
-        padding: 10,
-        borderTopColor: '#ddd',
-        borderTopWidth: 1,
-        alignItems: 'center',
+    container: {
+        flex: 1,
         backgroundColor: '#fff',
+    },
+    header: {
+        paddingTop: 50,
+        paddingBottom: 16,
+        alignItems: 'center',
+        borderBottomColor: '#eee',
+        borderBottomWidth: 1,
+    },
+    headerText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#000',
+    },
+    chatArea: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    inputBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderTopColor: '#eee',
+        borderTopWidth: 1,
+        backgroundColor: '#f5f5f5',
     },
     textInput: {
         flex: 1,
-        padding: 10,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 25,
-        marginRight: 10,
-        backgroundColor: '#fff',
+        marginHorizontal: 10,
+        backgroundColor: '#e0e0e0',
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 20,
+        color: '#000',
     },
-    sendButton: {
-        backgroundColor: '#007AFF',
-        padding: 12,
-        borderRadius: 25,
-        alignItems: 'center',
-        justifyContent: 'center',
+    iconButton: {
+        marginLeft: 8,
     },
 });
