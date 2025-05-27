@@ -27,7 +27,7 @@ export default function RegisterScreen() {
             return;
         }
 
-        // Show success alert and navigate to login screen
+        // Show success alert and navigate to log in screen
         Alert.alert('Success', 'Account created. You can now log in.');
         router.push('/login');
     };
