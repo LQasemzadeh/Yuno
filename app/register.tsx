@@ -17,7 +17,7 @@ export default function RegisterScreen() {
     const handleRegister = () => {
         // Email must end with @pfh.de
         if (!email.endsWith('@pfh.de')) {
-            Alert.alert('Invalid Email', 'Please use your PFH email ending with @pfh.de');
+            Alert.alert('Invalid Email', 'Please use your PFH email');
             return;
         }
 
