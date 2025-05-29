@@ -17,13 +17,13 @@ export default function LoginScreen() {
     const router = useRouter();
 
     const handleLogin = () => {
-        if (!email.endsWith('@student.pfh.de')) {
-            Alert.alert('Invalid Email', 'Please use your PFH student email.');
+        if (!email.endsWith('@pfh.de')) {
+            Alert.alert('Invalid Email', 'Please use your PFH email (e.g., name@pfh.de).');
             return;
         }
 
-        if (password.length < 6) {
-            Alert.alert('Invalid Password', 'Please enter a valid password.');
+        if (password.length < 8) {
+            Alert.alert('Invalid Password', 'Password must be at least 8 characters.');
             return;
         }
 
