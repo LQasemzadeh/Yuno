@@ -28,7 +28,7 @@ export default function LoginScreen() {
         }
 
         Alert.alert('Login Success', 'Welcome back!');
-        router.push('/(tabs)/chat'); // Go to chatbot screen after login
+        router.push('/home');
     };
 
     return (
