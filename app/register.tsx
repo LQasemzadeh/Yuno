@@ -34,7 +34,7 @@ export default function RegisterScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Create PFH Account</Text>
+            <Text style={styles.title}>Create Account</Text>
 
             <TextInput
                 style={styles.input}
