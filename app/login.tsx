@@ -28,7 +28,7 @@ export default function LoginScreen() {
         }
 
         Alert.alert('Login Success', 'Welcome back!');
-        router.push('/home');
+        router.push('/login');
     };
 
     return (
