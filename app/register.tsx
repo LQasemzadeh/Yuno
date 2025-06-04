@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import {
     View,
     Text,
@@ -7,33 +7,39 @@ import {
     StyleSheet,
     Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 
 export default function RegisterScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
+    const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, []);
 
     const handleRegister = () => {
-        // Email must end with @pfh.de
         if (!email.endsWith('@pfh.de')) {
             Alert.alert('Invalid Email', 'Please use your PFH email');
             return;
         }
 
-        // Password must be at least 8 characters
         if (password.length < 8) {
             Alert.alert('Weak Password', 'Password must be at least 8 characters.');
             return;
         }
 
-        // Show success alert and navigate to log in screen
         Alert.alert('Success', 'Account created. You can now log in.');
         router.push('/login');
     };
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <Text style={styles.backText}>←</Text>
+            </TouchableOpacity>
+
             <Text style={styles.title}>Create Account</Text>
 
             <TextInput
@@ -69,6 +75,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         backgroundColor: '#fff',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        padding: 10,
+        zIndex: 1,
+    },
+    backText: {
+        fontSize: 24,
+        color: '#133b89',
     },
     title: {
         fontSize: 24,
