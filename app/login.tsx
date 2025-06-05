@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import {
     View,
     Text,
@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
@@ -15,6 +15,12 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const navigation = useNavigation();
+    const params = useLocalSearchParams();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, []);
 
     const handleLogin = () => {
         if (!email.endsWith('@pfh.de')) {
@@ -33,7 +39,19 @@ export default function LoginScreen() {
 
     return (
         <View style={styles.container}>
+            {/* ✅ Back Arrow */}
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <Text style={styles.backText}>←</Text>
+            </TouchableOpacity>
+
             <Text style={styles.title}>Login to YUNO</Text>
+
+            {/* ✅ Success Message if redirected from registration */}
+            {params.registered === 'true' && (
+                <Text style={styles.successMessage}>
+                    ✅ You're officially part of the YUNO family. Now log in like a champ!
+                </Text>
+            )}
 
             <TextInput
                 style={styles.input}
@@ -43,6 +61,8 @@ export default function LoginScreen() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                textContentType="username"
+                autoComplete="email"
             />
 
             <View style={styles.passwordContainer}>
@@ -53,6 +73,8 @@ export default function LoginScreen() {
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
+                    textContentType="password"
+                    autoComplete="password"
                 />
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                     <Ionicons
@@ -84,9 +106,31 @@ const styles = StyleSheet.create({
         flex: 1, justifyContent: 'center', alignItems: 'center',
         padding: 20, backgroundColor: '#fff',
     },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        padding: 10,
+        zIndex: 1,
+    },
+    backText: {
+        fontSize: 24,
+        color: '#133b89',
+    },
     title: {
         fontSize: 24, fontWeight: 'bold',
-        color: '#133b89', marginBottom: 30,
+        color: '#133b89', marginBottom: 20,
+    },
+    successMessage: {
+        backgroundColor: '#e0ffe5',
+        borderColor: '#3cb371',
+        borderWidth: 1,
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 20,
+        color: '#2e8b57',
+        fontSize: 14,
+        textAlign: 'center',
     },
     input: {
         width: '100%', padding: 15,
