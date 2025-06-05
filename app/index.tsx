@@ -1,20 +1,28 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
+import { useLayoutEffect } from 'react';
 
 export default function HomeScreen() {
     const router = useRouter();
+    const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, []);
 
     return (
         <View style={styles.container}>
             <Text style={styles.logo}>YUNO</Text>
 
             <Image
-                source={require('../assets/YUNO.png')}
+                source={require('./assets/YUNO.png')}
                 style={styles.botImage}
                 resizeMode="contain"
             />
 
-            <Text style={styles.title}>Let’s start the Yuno <Text style={styles.ai}>AI</Text></Text>
+            <Text style={styles.title}>
+                Let’s start the Yuno <Text style={styles.ai}>AI</Text>
+            </Text>
             <Text style={styles.subtitle}>
                 Lost at PFH? Don’t worry, Yuno's got your back!
             </Text>

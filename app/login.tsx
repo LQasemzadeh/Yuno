@@ -14,6 +14,7 @@ export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
     const router = useRouter();
     const navigation = useNavigation();
     const params = useLocalSearchParams();
@@ -34,19 +35,21 @@ export default function LoginScreen() {
         }
 
         Alert.alert('Login Success', 'Welcome back!');
-        router.push('/login');
+
+        // ✅ Type-safe redirect to tab layout (loads index.tsx inside (tabs))
+        router.replace('/(tabs)');
     };
 
     return (
         <View style={styles.container}>
-            {/* ✅ Back Arrow */}
+            {/* Back Button */}
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                 <Text style={styles.backText}>←</Text>
             </TouchableOpacity>
 
             <Text style={styles.title}>Login to YUNO</Text>
 
-            {/* ✅ Success Message if redirected from registration */}
+            {/* Success Message if user just registered */}
             {params.registered === 'true' && (
                 <Text style={styles.successMessage}>
                     ✅ You're officially part of the YUNO family. Now log in like a champ!
