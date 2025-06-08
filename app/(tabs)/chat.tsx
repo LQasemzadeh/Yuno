@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
     View,
     Text,
@@ -9,8 +9,19 @@ import {
     Platform,
     SafeAreaView,
 } from 'react-native';
+import { useNavigation, useRouter } from 'expo-router';
 
 export default function ChatScreen() {
+    const navigation = useNavigation();
+    const router = useRouter();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            tabBarStyle: { display: 'none' },
+            headerShown: false,
+        });
+    }, [navigation]);
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <KeyboardAvoidingView
@@ -18,6 +29,11 @@ export default function ChatScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={80}
             >
+                {/* ✅ Back Arrow */}
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                    <Text style={styles.backText}>←</Text>
+                </TouchableOpacity>
+
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.headerText}>YUNO</Text>
@@ -33,7 +49,7 @@ export default function ChatScreen() {
                     </View>
                 </View>
 
-                {/* Input bar above tab bar */}
+                {/* Input bar */}
                 <View style={styles.inputWrapper}>
                     <TouchableOpacity style={styles.plusButton}>
                         <Text style={styles.plusText}>+</Text>
@@ -63,8 +79,20 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
     },
+    backButton: {
+        position: 'absolute',
+        top: 20,
+        left: 10,
+        zIndex: 10,
+        padding: 10,
+    },
+    backText: {
+        fontSize: 24,
+        color: '#133b89',
+    },
     header: {
-        paddingTop: 20,
+        paddingTop: 60,
+        alignItems: 'center',
     },
     headerText: {
         fontSize: 24,
@@ -94,7 +122,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingTop: 10,
-        paddingBottom: Platform.OS === 'ios' ? 30 : 20, // above bottom tab
+        paddingBottom: Platform.OS === 'ios' ? 30 : 20,
         borderTopWidth: 1,
         borderColor: '#ccc',
     },

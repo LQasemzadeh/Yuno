@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 import {
     View,
     Text,
@@ -6,14 +6,17 @@ import {
     TouchableOpacity,
     StyleSheet,
     Alert,
+    Platform,
 } from 'react-native';
 import { useRouter, useNavigation, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [faceIdAvailable, setFaceIdAvailable] = useState(false);
 
     const router = useRouter();
     const navigation = useNavigation();
@@ -22,6 +25,30 @@ export default function LoginScreen() {
     useLayoutEffect(() => {
         navigation.setOptions({ headerShown: false });
     }, []);
+
+    // Face ID support check
+    useEffect(() => {
+        (async () => {
+            const compatible = await LocalAuthentication.hasHardwareAsync();
+            const enrolled = await LocalAuthentication.isEnrolledAsync();
+            if (Platform.OS === 'ios' && compatible && enrolled) {
+                setFaceIdAvailable(true);
+                authenticateWithFaceID();
+            }
+        })();
+    }, []);
+
+    const authenticateWithFaceID = async () => {
+        const result = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Login with Face ID',
+        });
+
+        if (result.success) {
+            // Autofill (you can load from SecureStore or hardcoded for testing)
+            setEmail('student@pfh.de');
+            setPassword('securePassword123');
+        }
+    };
 
     const handleLogin = () => {
         if (!email.endsWith('@pfh.de')) {
@@ -35,21 +62,17 @@ export default function LoginScreen() {
         }
 
         Alert.alert('Login Success', 'Welcome back!');
-
-        // ✅ Type-safe redirect to tab layout (loads index.tsx inside (tabs))
         router.replace('/(tabs)');
     };
 
     return (
         <View style={styles.container}>
-            {/* Back Button */}
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                 <Text style={styles.backText}>←</Text>
             </TouchableOpacity>
 
             <Text style={styles.title}>Login to YUNO</Text>
 
-            {/* Success Message if user just registered */}
             {params.registered === 'true' && (
                 <Text style={styles.successMessage}>
                     ✅ You're officially part of the YUNO family. Now log in like a champ!
