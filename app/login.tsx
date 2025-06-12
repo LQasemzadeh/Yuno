@@ -1,3 +1,4 @@
+
 import { useEffect, useLayoutEffect, useState } from 'react';
 import {
     View,
@@ -27,31 +28,49 @@ export default function LoginScreen() {
 
     useEffect(() => {
         (async () => {
-            const compatible = await LocalAuthentication.hasHardwareAsync();
-            const enrolled = await LocalAuthentication.isEnrolledAsync();
-            if (compatible && enrolled) {
-                setFaceIdAvailable(true);
+            try {
+                const hasHardware = await LocalAuthentication.hasHardwareAsync();
+                const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+                setFaceIdAvailable(hasHardware && isEnrolled);
+            } catch (error) {
+                console.error('Error checking biometric support:', error);
+                setFaceIdAvailable(false);
             }
         })();
     }, []);
 
-    const handleSimulatedLogin = async () => {
-        if (faceIdAvailable) {
+    const authenticateUser = async () => {
+        try {
             const result = await LocalAuthentication.authenticateAsync({
-                promptMessage: 'Confirm with Face ID to continue',
-                fallbackLabel: 'Enter passcode',
-                disableDeviceFallback: false,
+                promptMessage: Platform.OS === 'ios' ? 'Authenticate with Face ID' : 'Authenticate with Biometrics',
+                disableDeviceFallback: true, // This prevents fallback to passcode
+                cancelLabel: 'Cancel',
             });
 
-            if (!result.success) {
-                Alert.alert('Authentication Failed', 'Face ID verification was not successful.');
+            return result.success;
+        } catch (error) {
+            console.error('Authentication error:', error);
+            return false;
+        }
+    };
+
+    const handleSimulatedLogin = async () => {
+        if (faceIdAvailable) {
+            const authenticated = await authenticateUser();
+            if (!authenticated) {
+                Alert.alert(
+                    'Authentication Failed',
+                    Platform.OS === 'ios'
+                        ? 'Face ID authentication failed.'
+                        : 'Biometric authentication failed.'
+                );
                 return;
             }
         }
 
-        // Continue with simulated PFH login
         setIsLoading(true);
 
+        // Simulated login process
         setTimeout(() => {
             setName('Ladan');
             setEmail('zahra.qasemzadeh@pfh.de');
