@@ -10,41 +10,27 @@ import {
     SafeAreaView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {
-    Ionicons,
-    MaterialIcons,
-} from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ExploreScreen() {
     const [imageUri, setImageUri] = useState<string | null>(null);
 
     const handlePickImage = async () => {
         if (imageUri) {
-            // Image exists: offer to change or remove
             Alert.alert('Profile Image', 'What would you like to do?', [
-                {
-                    text: 'Change Image',
-                    onPress: pickImage,
-                },
-                {
-                    text: 'Remove Image',
-                    onPress: () => setImageUri(null),
-                    style: 'destructive',
-                },
-                {
-                    text: 'Cancel',
-                    style: 'cancel',
-                },
+                { text: 'Change Image', onPress: pickImage },
+                { text: 'Remove Image', onPress: () => setImageUri(null), style: 'destructive' },
+                { text: 'Cancel', style: 'cancel' },
             ]);
         } else {
-            // No image: open picker
             pickImage();
         }
     };
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
         if (!permissionResult.granted) {
             Alert.alert('Permission Required', 'Please allow access to your photo library.');
             return;
@@ -60,8 +46,26 @@ export default function ExploreScreen() {
         }
     };
 
+    const handleLogout = () => {
+        Alert.alert('Log Out', 'Do you really want to log out?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Log Out',
+                style: 'destructive',
+                onPress: async () => {
+                    await AsyncStorage.clear();
+                    router.replace('/');
+                },
+            },
+        ]);
+    };
+
     const handleOptionPress = (option: string) => {
-        Alert.alert(option, `You selected ${option}`);
+        if (option === 'Log Out') {
+            handleLogout();
+        } else {
+            Alert.alert(option, `You selected ${option}`);
+        }
     };
 
     return (
@@ -81,27 +85,49 @@ export default function ExploreScreen() {
                 </TouchableOpacity>
 
                 <View style={styles.optionsContainer}>
-                    <OptionItem icon={<Ionicons name="bookmark-outline" size={24} color="#000" />} label="Saved Messages" onPress={() => handleOptionPress('Saved Messages')} />
-                    <OptionItem icon={<Ionicons name="folder-outline" size={24} color="#000" />} label="Chat Folders" onPress={() => handleOptionPress('Chat Folders')} />
-                    <OptionItem icon={<Ionicons name="notifications-outline" size={24} color="#000" />} label="Notifications and Sounds" onPress={() => handleOptionPress('Notifications and Sounds')} />
-                    <OptionItem icon={<Ionicons name="lock-closed-outline" size={24} color="#000" />} label="Privacy and Policy" onPress={() => handleOptionPress('Privacy and Policy')} />
-                    <OptionItem icon={<Ionicons name="language-outline" size={24} color="#000" />} label="App Language" onPress={() => handleOptionPress('App Language')} />
-                    <OptionItem icon={<MaterialIcons name="logout" size={24} color="red" />} label="Log Out" onPress={() => handleOptionPress('Log Out')} />
+                    <OptionItem
+                        icon={<Ionicons name="bookmark-outline" size={24} color="#000" />}
+                        label="Saved Messages"
+                        onPress={() => handleOptionPress('Saved Messages')}
+                    />
+                    <OptionItem
+                        icon={<Ionicons name="folder-outline" size={24} color="#000" />}
+                        label="Chat Folders"
+                        onPress={() => handleOptionPress('Chat Folders')}
+                    />
+                    <OptionItem
+                        icon={<Ionicons name="notifications-outline" size={24} color="#000" />}
+                        label="Notifications and Sounds"
+                        onPress={() => handleOptionPress('Notifications and Sounds')}
+                    />
+                    <OptionItem
+                        icon={<Ionicons name="lock-closed-outline" size={24} color="#000" />}
+                        label="Privacy and Policy"
+                        onPress={() => handleOptionPress('Privacy and Policy')}
+                    />
+                    <OptionItem
+                        icon={<Ionicons name="language-outline" size={24} color="#000" />}
+                        label="App Language"
+                        onPress={() => handleOptionPress('App Language')}
+                    />
+                    <OptionItem
+                        icon={<MaterialIcons name="logout" size={24} color="red" />}
+                        label="Log Out"
+                        onPress={() => handleOptionPress('Log Out')}
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
 
-function OptionItem({
-                        icon,
-                        label,
-                        onPress,
-                    }: {
+interface OptionItemProps {
     icon: React.ReactNode;
     label: string;
     onPress: () => void;
-}) {
+}
+
+function OptionItem({ icon, label, onPress }: OptionItemProps) {
     return (
         <TouchableOpacity style={styles.optionItem} onPress={onPress}>
             {icon}

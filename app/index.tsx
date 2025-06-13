@@ -16,7 +16,7 @@ export default function HomeScreen() {
             <Text style={styles.logo}>YUNO</Text>
 
             <Image
-                source={require('./assets/YUNO.png')}
+                source={require('@/app/start/YUNO.png')}
                 style={styles.botImage}
                 resizeMode="contain"
             />
