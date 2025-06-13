@@ -1,8 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    ScrollView,
+} from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from 'expo-router';
-import { Ionicons, FontAwesome5, MaterialIcons, Entypo } from '@expo/vector-icons';
+import {
+    Ionicons,
+    FontAwesome5,
+    MaterialIcons,
+    Entypo,
+} from '@expo/vector-icons';
 
 const IndexScreen = () => {
     const navigation = useNavigation();
@@ -12,7 +24,13 @@ const IndexScreen = () => {
         { label: 'Secretary', icon: <Ionicons name="person" size={24} color="#333" /> },
         { label: 'Finance', icon: <FontAwesome5 name="money-bill" size={24} color="#333" /> },
         { label: 'Support', icon: <Entypo name="hand" size={24} color="#333" /> },
-        // add more if needed
+        { label: 'Laboratories', icon: <FontAwesome5 name="flask" size={24} color="#333" /> },
+        { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#333" /> },
+        { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#333" /> },
+        { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#333" /> },
+        { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#333" /> },
+        { label: 'Admissions Office', icon: <FontAwesome5 name="user-graduate" size={24} color="#333" /> },
+        { label: 'University Admin', icon: <FontAwesome5 name="university" size={24} color="#333" /> },
     ];
 
     return (
@@ -61,14 +79,18 @@ const IndexScreen = () => {
             </TouchableOpacity>
 
             <Text style={styles.sectionTitle}>Topics</Text>
-            <View style={styles.topicRow}>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.topicRow}
+            >
                 {topicData.map((item, index) => (
                     <View key={index} style={styles.topicCard}>
                         {item.icon}
                         <Text style={styles.topicLabel}>{item.label}</Text>
                     </View>
                 ))}
-            </View>
+            </ScrollView>
         </ScrollView>
     );
 };
@@ -162,9 +184,8 @@ const styles = StyleSheet.create({
     },
     topicRow: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
-        marginBottom: 30,
+        paddingHorizontal: 12,
+        paddingBottom: 30,
     },
     topicCard: {
         width: 90,
@@ -179,5 +200,7 @@ const styles = StyleSheet.create({
         marginTop: 6,
         fontSize: 14,
         color: '#333',
+        textAlign: 'center',
+        paddingHorizontal: 4,
     },
 });
