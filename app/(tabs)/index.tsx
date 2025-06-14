@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -20,14 +20,13 @@ import {
 const IndexScreen = () => {
     const navigation = useNavigation();
 
-    // Get today's date
+    // Date values
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    const monthName = today.toLocaleString('en-US', { month: 'long' }); // e.g. September
-    const weekdayName = today.toLocaleString('en-US', { weekday: 'long' }); // e.g. Saturday
-
+    const monthName = today.toLocaleString('en-US', { month: 'long' });
+    const weekdayName = today.toLocaleString('en-US', { weekday: 'long' });
     const outlookURL = `https://outlook.office.com/calendar/view/day?date=${year}-${month}-${day}`;
 
     const topicData = [
@@ -71,14 +70,13 @@ const IndexScreen = () => {
                 </Swiper>
             </View>
 
+            {/* Card Row with Map and Calendar */}
             <View style={styles.cardRow}>
-                {/* Map Card */}
                 <View style={styles.card}>
                     <Ionicons name="map" size={32} color="#333" />
                     <Text style={styles.cardLabel}>Map</Text>
                 </View>
 
-                {/* iOS-style Calendar Card */}
                 <TouchableOpacity style={styles.iosCalendarCard} onPress={() => Linking.openURL(outlookURL)}>
                     <View style={styles.calendarHeader}>
                         <Text style={styles.calendarMonth}>{monthName}</Text>
@@ -87,6 +85,7 @@ const IndexScreen = () => {
                         <Text style={styles.calendarDayNumber}>{day}</Text>
                         <Text style={styles.calendarWeekday}>{weekdayName}</Text>
                     </View>
+                    <Text style={styles.chevron}>›</Text>
                 </TouchableOpacity>
             </View>
 
@@ -192,6 +191,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 3 },
         shadowRadius: 6,
         elevation: 3,
+        position: 'relative',
     },
     calendarHeader: {
         backgroundColor: '#f59e0b',
@@ -216,6 +216,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#f59e0b',
         fontWeight: '500',
+    },
+    chevron: {
+        position: 'absolute',
+        bottom: 10,
+        right: 12,
+        fontSize: 22,
+        color: '#999',
     },
     chatButton: {
         marginTop: 20,
