@@ -53,10 +53,10 @@ const IndexScreen = () => {
                     dotStyle={styles.dot}
                     activeDotStyle={styles.activeDot}
                 >
-                    <Image source={require('@/app/start/banner01.png')} style={styles.bannerImage} resizeMode="cover" />
-                    <Image source={require('@/app/start/banner02.png')} style={styles.bannerImage} resizeMode="cover" />
-                    <Image source={require('@/app/start/banner03.png')} style={styles.bannerImage} resizeMode="cover" />
-                    <Image source={require('@/app/start/banner04.png')} style={styles.bannerImage} resizeMode="cover" />
+                    <Image source={require('@/app/assets/banner02.png')} style={styles.bannerImage} resizeMode="cover" />
+                    <Image source={require('@/app/assets/banner01.jpg')} style={styles.bannerImage} resizeMode="cover" />
+                    <Image source={require('@/app/assets/banner03.jpg')} style={styles.bannerImage} resizeMode="cover" />
+                    <Image source={require('@/app/assets/banner06.jpg')} style={styles.bannerImage} resizeMode="cover" />
                 </Swiper>
             </View>
 
