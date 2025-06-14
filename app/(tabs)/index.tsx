@@ -6,6 +6,7 @@ import {
     Image,
     TouchableOpacity,
     ScrollView,
+    Linking,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from 'expo-router';
@@ -18,6 +19,14 @@ import {
 
 const IndexScreen = () => {
     const navigation = useNavigation();
+
+    // Generate today's date and Outlook link
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedDate = today.toDateString(); // e.g., "Sat Jun 15 2025"
+    const outlookURL = `https://outlook.office.com/calendar/view/day?date=${year}-${month}-${day}`;
 
     const topicData = [
         { label: 'Library', icon: <FontAwesome5 name="book" size={24} color="#333" /> },
@@ -65,10 +74,12 @@ const IndexScreen = () => {
                     <Ionicons name="map" size={32} color="#333" />
                     <Text style={styles.cardLabel}>Map</Text>
                 </View>
-                <View style={styles.card}>
+
+                <TouchableOpacity style={styles.card} onPress={() => Linking.openURL(outlookURL)}>
                     <Ionicons name="calendar" size={32} color="#333" />
                     <Text style={styles.cardLabel}>Calendar</Text>
-                </View>
+                    <Text style={styles.dateText}>{formattedDate}</Text>
+                </TouchableOpacity>
             </View>
 
             <TouchableOpacity
@@ -161,10 +172,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
+    dateText: {
+        fontSize: 14,
+        color: '#555',
+        marginTop: 6,
+        textAlign: 'center',
+    },
     chatButton: {
         marginTop: 20,
         marginHorizontal: 20,
-        backgroundColor: '#2563eb',
+        backgroundColor: '#133b89',
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: 'center',
