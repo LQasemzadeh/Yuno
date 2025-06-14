@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -20,7 +20,6 @@ import {
 const IndexScreen = () => {
     const navigation = useNavigation();
 
-    // Date values
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -30,17 +29,17 @@ const IndexScreen = () => {
     const outlookURL = `https://outlook.office.com/calendar/view/day?date=${year}-${month}-${day}`;
 
     const topicData = [
-        { label: 'Library', icon: <FontAwesome5 name="book" size={24} color="#333" /> },
-        { label: 'Secretary', icon: <Ionicons name="person" size={24} color="#333" /> },
-        { label: 'Finance', icon: <FontAwesome5 name="money-bill" size={24} color="#333" /> },
-        { label: 'Support', icon: <Entypo name="hand" size={24} color="#333" /> },
-        { label: 'Laboratories', icon: <FontAwesome5 name="flask" size={24} color="#333" /> },
-        { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#333" /> },
-        { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#333" /> },
-        { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#333" /> },
-        { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#333" /> },
-        { label: 'Admissions Office', icon: <FontAwesome5 name="user-graduate" size={24} color="#333" /> },
-        { label: 'University Admin', icon: <FontAwesome5 name="university" size={24} color="#333" /> },
+        { label: 'Library', icon: <FontAwesome5 name="book" size={24} color="#133b89" /> },
+        { label: 'Secretary', icon: <Ionicons name="person" size={24} color="#133b89" /> },
+        { label: 'Finance', icon: <FontAwesome5 name="money-bill" size={24} color="#133b89" /> },
+        { label: 'Support', icon: <Entypo name="hand" size={24} color="#133b89" /> },
+        { label: 'Laboratories', icon: <FontAwesome5 name="flask" size={24} color="#133b89" /> },
+        { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> },
+        { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#133b89" /> },
+        { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#133b89" /> },
+        { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#133b89" /> },
+        { label: 'Admissions Office', icon: <FontAwesome5 name="user-graduate" size={24} color="#133b89" /> },
+        { label: 'University Admin', icon: <FontAwesome5 name="university" size={24} color="#133b89" /> },
     ];
 
     return (
@@ -253,11 +252,13 @@ const styles = StyleSheet.create({
     topicCard: {
         width: 90,
         height: 90,
-        backgroundColor: '#e5e5e5',
+        backgroundColor: '#fff',
         borderRadius: 12,
         margin: 8,
         justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#133b89',
     },
     topicLabel: {
         marginTop: 6,
