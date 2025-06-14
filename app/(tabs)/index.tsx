@@ -20,12 +20,14 @@ import {
 const IndexScreen = () => {
     const navigation = useNavigation();
 
-    // Generate today's date and Outlook link
+    // Get today's date
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = today.toDateString(); // e.g., "Sat Jun 15 2025"
+    const monthName = today.toLocaleString('en-US', { month: 'long' }); // e.g. September
+    const weekdayName = today.toLocaleString('en-US', { weekday: 'long' }); // e.g. Saturday
+
     const outlookURL = `https://outlook.office.com/calendar/view/day?date=${year}-${month}-${day}`;
 
     const topicData = [
@@ -70,15 +72,21 @@ const IndexScreen = () => {
             </View>
 
             <View style={styles.cardRow}>
+                {/* Map Card */}
                 <View style={styles.card}>
                     <Ionicons name="map" size={32} color="#333" />
                     <Text style={styles.cardLabel}>Map</Text>
                 </View>
 
-                <TouchableOpacity style={styles.card} onPress={() => Linking.openURL(outlookURL)}>
-                    <Ionicons name="calendar" size={32} color="#333" />
-                    <Text style={styles.cardLabel}>Calendar</Text>
-                    <Text style={styles.dateText}>{formattedDate}</Text>
+                {/* iOS-style Calendar Card */}
+                <TouchableOpacity style={styles.iosCalendarCard} onPress={() => Linking.openURL(outlookURL)}>
+                    <View style={styles.calendarHeader}>
+                        <Text style={styles.calendarMonth}>{monthName}</Text>
+                    </View>
+                    <View style={styles.calendarBody}>
+                        <Text style={styles.calendarDayNumber}>{day}</Text>
+                        <Text style={styles.calendarWeekday}>{weekdayName}</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
 
@@ -172,11 +180,42 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
-    dateText: {
-        fontSize: 14,
-        color: '#555',
-        marginTop: 6,
-        textAlign: 'center',
+    iosCalendarCard: {
+        width: '45%',
+        borderRadius: 12,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 6,
+        elevation: 3,
+    },
+    calendarHeader: {
+        backgroundColor: '#f59e0b',
+        paddingVertical: 8,
+        alignItems: 'center',
+    },
+    calendarMonth: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    calendarBody: {
+        paddingVertical: 20,
+        alignItems: 'center',
+    },
+    calendarDayNumber: {
+        fontSize: 42,
+        fontWeight: 'bold',
+        color: '#111',
+    },
+    calendarWeekday: {
+        fontSize: 18,
+        color: '#f59e0b',
+        fontWeight: '500',
     },
     chatButton: {
         marginTop: 20,
