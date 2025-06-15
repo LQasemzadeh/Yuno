@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -7,18 +7,20 @@ import {
     TouchableOpacity,
     ScrollView,
     Linking,
+    Alert,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import {
     Ionicons,
     FontAwesome5,
     MaterialIcons,
-    Entypo,
 } from '@expo/vector-icons';
 
 const IndexScreen = () => {
     const navigation = useNavigation();
+    const [profileImage, setProfileImage] = useState<string | null>(null);
 
     const today = new Date();
     const year = today.getFullYear();
@@ -29,25 +31,69 @@ const IndexScreen = () => {
     const outlookURL = `https://outlook.office.com/calendar/view/day?date=${year}-${month}-${day}`;
 
     const topicData = [
-        { label: 'Library', icon: <FontAwesome5 name="book" size={24} color="#133b89" /> },
-        { label: 'Secretary', icon: <Ionicons name="person" size={24} color="#133b89" /> },
-        { label: 'Finance', icon: <FontAwesome5 name="money-bill" size={24} color="#133b89" /> },
-        { label: 'Support', icon: <Entypo name="hand" size={24} color="#133b89" /> },
-        { label: 'Laboratories', icon: <FontAwesome5 name="flask" size={24} color="#133b89" /> },
         { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> },
         { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#133b89" /> },
         { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#133b89" /> },
         { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#133b89" /> },
         { label: 'Admissions Office', icon: <FontAwesome5 name="user-graduate" size={24} color="#133b89" /> },
         { label: 'University Admin', icon: <FontAwesome5 name="university" size={24} color="#133b89" /> },
+        { label: 'Library', icon: <FontAwesome5 name="book" size={24} color="#133b89" /> },
+        { label: 'Secretary', icon: <Ionicons name="person" size={24} color="#133b89" /> },
+        { label: 'Finance', icon: <FontAwesome5 name="money-bill" size={24} color="#133b89" /> },
+        { label: 'Laboratories', icon: <FontAwesome5 name="flask" size={24} color="#133b89" /> },
     ];
+
+    const pickImage = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissionResult.granted) {
+            alert('Permission to access camera roll is required!');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setProfileImage(result.assets[0].uri);
+        }
+    };
+
+    const handleProfilePress = () => {
+        Alert.alert(
+            "Profile Picture",
+            "Choose an option",
+            [
+                { text: "Change Photo", onPress: pickImage },
+                { text: "Remove Photo", onPress: () => setProfileImage(null) },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
+    };
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <View>
-                    <Text style={styles.title}>Hi Ladan!</Text>
-                    <Text style={styles.subtitle}>Welcome to your AI Chat Bot!</Text>
+                <View style={styles.userRow}>
+                    <TouchableOpacity onPress={handleProfilePress} style={styles.profileImageContainer}>
+                        {profileImage ? (
+                            <Image source={{ uri: profileImage }} style={styles.profileImage} />
+                        ) : (
+                            <View style={styles.profilePlaceholder}>
+                                <Ionicons name="person" size={28} color="#888" />
+                            </View>
+                        )}
+                        <View style={styles.addIcon}>
+                            <Ionicons name="add-circle" size={18} color="#007bff" />
+                        </View>
+                    </TouchableOpacity>
+                    <View>
+                        <Text style={styles.title}>Hi Ladan!</Text>
+                        <Text style={styles.subtitle}>Welcome to your AI Chat Bot!</Text>
+                    </View>
                 </View>
                 <TouchableOpacity style={styles.languageIcon}>
                     <Ionicons name="language" size={24} color="#333" />
@@ -69,7 +115,6 @@ const IndexScreen = () => {
                 </Swiper>
             </View>
 
-            {/* Card Row with Map and Calendar */}
             <View style={styles.cardRow}>
                 <View style={styles.card}>
                     <Ionicons name="map" size={32} color="#333" />
@@ -126,16 +171,20 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
+    userRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     languageIcon: {
         padding: 8,
     },
     title: {
-        fontSize: 26,
+        fontSize: 22, // reduced size
         fontWeight: 'bold',
         color: '#1a1a1a',
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: 14, // reduced size
         color: '#555',
     },
     swiperContainer: {
@@ -266,5 +315,34 @@ const styles = StyleSheet.create({
         color: '#333',
         textAlign: 'center',
         paddingHorizontal: 4,
+    },
+    profileImageContainer: {
+        marginRight: 12,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        position: 'relative',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profileImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+    },
+    profilePlaceholder: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#ddd',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    addIcon: {
+        position: 'absolute',
+        bottom: -4,
+        right: -4,
+        backgroundColor: '#fff',
+        borderRadius: 10,
     },
 });
