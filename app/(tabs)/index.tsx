@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -21,6 +21,7 @@ import {
 const IndexScreen = () => {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState<string | null>(null);
+    const [simulatedEvents, setSimulatedEvents] = useState<string[]>([]);
 
     const today = new Date();
     const year = today.getFullYear();
@@ -29,6 +30,26 @@ const IndexScreen = () => {
     const monthName = today.toLocaleString('en-US', { month: 'long' });
     const weekdayName = today.toLocaleString('en-US', { weekday: 'long' });
     const outlookURL = `https://outlook.office.com/calendar/view/day?date=${year}-${month}-${day}`;
+
+    useEffect(() => {
+        const isWeekend = today.getDay() === 0 || today.getDay() === 6;
+
+        const possibleEvents = [
+            'UX Workshop at 10:00 AM',
+            'Library Orientation at 1:00 PM',
+            'Finance Consultation at 2:00 PM',
+            'Group Project Meeting at 4:30 PM',
+            'Career Coaching at 11:00 AM',
+        ];
+
+        if (isWeekend) {
+            setSimulatedEvents(['No events today']);
+        } else {
+            const shuffled = possibleEvents.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 1);
+            setSimulatedEvents(selected);
+        }
+    }, []);
 
     const topicData = [
         { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> },
@@ -128,6 +149,11 @@ const IndexScreen = () => {
                     <View style={styles.calendarBody}>
                         <Text style={styles.calendarDayNumber}>{day}</Text>
                         <Text style={styles.calendarWeekday}>{weekdayName}</Text>
+                        {simulatedEvents.map((event, index) => (
+                            <Text key={index} style={styles.eventText}>
+                                {event === 'No events today' ? 'No events today' : `📅 ${event}`}
+                            </Text>
+                        ))}
                     </View>
                     <Text style={styles.chevron}>›</Text>
                 </TouchableOpacity>
@@ -179,12 +205,12 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     title: {
-        fontSize: 22, // reduced size
+        fontSize: 22,
         fontWeight: 'bold',
         color: '#1a1a1a',
     },
     subtitle: {
-        fontSize: 14, // reduced size
+        fontSize: 14,
         color: '#555',
     },
     swiperContainer: {
@@ -224,7 +250,7 @@ const styles = StyleSheet.create({
     },
     cardLabel: {
         marginTop: 10,
-        fontSize: 16,
+        fontSize: 14,
         color: '#333',
     },
     iosCalendarCard: {
@@ -311,7 +337,7 @@ const styles = StyleSheet.create({
     },
     topicLabel: {
         marginTop: 6,
-        fontSize: 14,
+        fontSize: 12,
         color: '#333',
         textAlign: 'center',
         paddingHorizontal: 4,
@@ -344,5 +370,11 @@ const styles = StyleSheet.create({
         right: -4,
         backgroundColor: '#fff',
         borderRadius: 10,
+    },
+    eventText: {
+        fontSize: 12,
+        color: '#333',
+        marginTop: 4,
+        textAlign: 'center',
     },
 });
