@@ -139,7 +139,7 @@ const IndexScreen = () => {
             <View style={styles.cardRow}>
                 <View style={styles.card}>
                     <Ionicons name="map" size={32} color="#333" />
-                    <Text style={styles.cardLabel}>Map</Text>
+                    <Text style={styles.cardLabel}>Campus Info</Text>
                 </View>
 
                 <TouchableOpacity style={styles.iosCalendarCard} onPress={() => Linking.openURL(outlookURL)}>
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     },
     topicLabel: {
         marginTop: 6,
-        fontSize: 12,
+        fontSize: 12, // made smaller
         color: '#333',
         textAlign: 'center',
         paddingHorizontal: 4,
