@@ -17,11 +17,13 @@ import {
     FontAwesome5,
     MaterialIcons,
 } from '@expo/vector-icons';
+import Modal from 'react-native-modal';
 
 const IndexScreen = () => {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [simulatedEvents, setSimulatedEvents] = useState<string[]>([]);
+    const [showAllEvents, setShowAllEvents] = useState(false);
 
     const today = new Date();
     const year = today.getFullYear();
@@ -33,7 +35,6 @@ const IndexScreen = () => {
 
     useEffect(() => {
         const isWeekend = today.getDay() === 0 || today.getDay() === 6;
-
         const possibleEvents = [
             'UX Workshop at 10:00 AM',
             'Library Orientation at 1:00 PM',
@@ -50,19 +51,6 @@ const IndexScreen = () => {
             setSimulatedEvents(selected);
         }
     }, []);
-
-    const topicData = [
-        { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> },
-        { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#133b89" /> },
-        { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#133b89" /> },
-        { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#133b89" /> },
-        { label: 'Admissions Office', icon: <FontAwesome5 name="user-graduate" size={24} color="#133b89" /> },
-        { label: 'University Admin', icon: <FontAwesome5 name="university" size={24} color="#133b89" /> },
-        { label: 'Library', icon: <FontAwesome5 name="book" size={24} color="#133b89" /> },
-        { label: 'Secretary', icon: <Ionicons name="person" size={24} color="#133b89" /> },
-        { label: 'Finance', icon: <FontAwesome5 name="money-bill" size={24} color="#133b89" /> },
-        { label: 'Laboratories', icon: <FontAwesome5 name="flask" size={24} color="#133b89" /> },
-    ];
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -122,13 +110,7 @@ const IndexScreen = () => {
             </View>
 
             <View style={styles.swiperContainer}>
-                <Swiper
-                    autoplay
-                    autoplayTimeout={3}
-                    showsPagination
-                    dotStyle={styles.dot}
-                    activeDotStyle={styles.activeDot}
-                >
+                <Swiper autoplay autoplayTimeout={3} showsPagination dotStyle={styles.dot} activeDotStyle={styles.activeDot}>
                     <Image source={require('@/app/assets/banner02.png')} style={styles.bannerImage} resizeMode="cover" />
                     <Image source={require('@/app/assets/banner01.jpg')} style={styles.bannerImage} resizeMode="cover" />
                     <Image source={require('@/app/assets/banner03.jpg')} style={styles.bannerImage} resizeMode="cover" />
@@ -137,10 +119,10 @@ const IndexScreen = () => {
             </View>
 
             <View style={styles.cardRow}>
-                <View style={styles.card}>
+                <TouchableOpacity style={styles.card}>
                     <Ionicons name="map" size={32} color="#333" />
                     <Text style={styles.cardLabel}>Campus Info</Text>
-                </View>
+                </TouchableOpacity>
 
                 <TouchableOpacity style={styles.iosCalendarCard} onPress={() => Linking.openURL(outlookURL)}>
                     <View style={styles.calendarHeader}>
@@ -149,36 +131,57 @@ const IndexScreen = () => {
                     <View style={styles.calendarBody}>
                         <Text style={styles.calendarDayNumber}>{day}</Text>
                         <Text style={styles.calendarWeekday}>{weekdayName}</Text>
-                        {simulatedEvents.map((event, index) => (
-                            <Text key={index} style={styles.eventText}>
-                                {event === 'No events today' ? 'No events today' : `📅 ${event}`}
-                            </Text>
-                        ))}
+                        {simulatedEvents.length > 0 && (
+                            <View style={styles.eventRow}>
+                                <View style={styles.eventBox}>
+                                    <Ionicons name="calendar-outline" size={14} color="#133b89" />
+                                    <Text style={styles.eventText} numberOfLines={1}>{simulatedEvents[0]}</Text>
+                                </View>
+                                {simulatedEvents.length > 1 && (
+                                    <TouchableOpacity style={styles.plusBox} onPress={() => setShowAllEvents(true)}>
+                                        <Text style={styles.plusText}>+</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        )}
                     </View>
                     <Text style={styles.chevron}>›</Text>
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-                style={styles.chatButton}
-                onPress={() => navigation.navigate('chat' as never)}
-            >
+            <TouchableOpacity style={styles.chatButton} onPress={() => navigation.navigate('chat' as never)}>
                 <Text style={styles.chatButtonText}>Get Start New Chat</Text>
             </TouchableOpacity>
 
             <Text style={styles.sectionTitle}>Topics</Text>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.topicRow}
-            >
-                {topicData.map((item, index) => (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.topicRow}>
+                {[
+                    { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> },
+                    { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#133b89" /> },
+                    { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#133b89" /> },
+                    { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#133b89" /> },
+                ].map((item, index) => (
                     <View key={index} style={styles.topicCard}>
                         {item.icon}
                         <Text style={styles.topicLabel}>{item.label}</Text>
                     </View>
                 ))}
             </ScrollView>
+
+            <Modal isVisible={showAllEvents} onBackdropPress={() => setShowAllEvents(false)} animationIn="fadeIn" animationOut="fadeOut">
+                <View style={styles.modalBox}>
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setShowAllEvents(false)}>
+                        <Text style={styles.closeText}>✕</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.modalTitle}>Today's Events</Text>
+                    {simulatedEvents.map((event, index) => (
+                        <View key={index} style={styles.modalEventBox}>
+                            <Ionicons name="calendar-outline" size={14} color="#133b89" />
+                            <Text style={styles.modalEventText}>{event}</Text>
+                        </View>
+                    ))}
+                </View>
+            </Modal>
         </ScrollView>
     );
 };
@@ -186,195 +189,45 @@ const IndexScreen = () => {
 export default IndexScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    header: {
-        marginTop: 50,
-        marginHorizontal: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    userRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    languageIcon: {
-        padding: 8,
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#1a1a1a',
-    },
-    subtitle: {
-        fontSize: 14,
-        color: '#555',
-    },
-    swiperContainer: {
-        height: 180,
-        marginTop: 20,
-    },
-    bannerImage: {
-        width: '100%',
-        height: '100%',
-    },
-    dot: {
-        backgroundColor: '#ccc',
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        marginHorizontal: 4,
-    },
-    activeDot: {
-        backgroundColor: '#f5c242',
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        marginHorizontal: 4,
-    },
-    cardRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        marginTop: 20,
-        paddingHorizontal: 10,
-    },
-    card: {
-        width: '45%',
-        backgroundColor: '#f0f0f0',
-        borderRadius: 12,
-        paddingVertical: 20,
-        alignItems: 'center',
-    },
-    cardLabel: {
-        marginTop: 10,
-        fontSize: 14,
-        color: '#333',
-    },
-    iosCalendarCard: {
-        width: '45%',
-        borderRadius: 12,
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#ddd',
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 3 },
-        shadowRadius: 6,
-        elevation: 3,
-        position: 'relative',
-    },
-    calendarHeader: {
-        backgroundColor: '#f59e0b',
-        paddingVertical: 8,
-        alignItems: 'center',
-    },
-    calendarMonth: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    calendarBody: {
-        paddingVertical: 20,
-        alignItems: 'center',
-    },
-    calendarDayNumber: {
-        fontSize: 42,
-        fontWeight: 'bold',
-        color: '#111',
-    },
-    calendarWeekday: {
-        fontSize: 18,
-        color: '#f59e0b',
-        fontWeight: '500',
-    },
-    chevron: {
-        position: 'absolute',
-        bottom: 10,
-        right: 12,
-        fontSize: 22,
-        color: '#999',
-    },
-    chatButton: {
-        marginTop: 20,
-        marginHorizontal: 20,
-        backgroundColor: '#133b89',
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-    },
-    chatButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    sectionTitle: {
-        fontSize: 22,
-        fontWeight: '600',
-        marginHorizontal: 20,
-        marginTop: 30,
-        marginBottom: 10,
-        color: '#1a1a1a',
-    },
-    topicRow: {
-        flexDirection: 'row',
-        paddingHorizontal: 12,
-        paddingBottom: 30,
-    },
-    topicCard: {
-        width: 90,
-        height: 90,
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        margin: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#133b89',
-    },
-    topicLabel: {
-        marginTop: 6,
-        fontSize: 12, // made smaller
-        color: '#333',
-        textAlign: 'center',
-        paddingHorizontal: 4,
-    },
-    profileImageContainer: {
-        marginRight: 12,
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        position: 'relative',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    profileImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-    },
-    profilePlaceholder: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#ddd',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    addIcon: {
-        position: 'absolute',
-        bottom: -4,
-        right: -4,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-    },
-    eventText: {
-        fontSize: 12,
-        color: '#333',
-        marginTop: 4,
-        textAlign: 'center',
-    },
+    container: { flex: 1, backgroundColor: '#fff' },
+    header: { marginTop: 50, marginHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    userRow: { flexDirection: 'row', alignItems: 'center' },
+    languageIcon: { padding: 8 },
+    title: { fontSize: 22, fontWeight: 'bold', color: '#1a1a1a' },
+    subtitle: { fontSize: 14, color: '#555' },
+    swiperContainer: { height: 180, marginTop: 20 },
+    bannerImage: { width: '100%', height: '100%' },
+    dot: { backgroundColor: '#ccc', width: 8, height: 8, borderRadius: 4, marginHorizontal: 4 },
+    activeDot: { backgroundColor: '#f5c242', width: 10, height: 10, borderRadius: 5, marginHorizontal: 4 },
+    cardRow: { flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20, paddingHorizontal: 10 },
+    card: { width: '45%', backgroundColor: '#f0f0f0', borderRadius: 12, paddingVertical: 20, alignItems: 'center' },
+    cardLabel: { marginTop: 10, fontSize: 14, color: '#333' },
+    iosCalendarCard: { width: '45%', borderRadius: 12, backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 3, position: 'relative' },
+    calendarHeader: { backgroundColor: '#f59e0b', paddingVertical: 8, alignItems: 'center' },
+    calendarMonth: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+    calendarBody: { paddingVertical: 16, alignItems: 'center' },
+    calendarDayNumber: { fontSize: 42, fontWeight: 'bold', color: '#111' },
+    calendarWeekday: { fontSize: 18, color: '#f59e0b', fontWeight: '500' },
+    chevron: { position: 'absolute', bottom: 10, right: 12, fontSize: 22, color: '#999' },
+    chatButton: { marginTop: 20, marginHorizontal: 20, backgroundColor: '#133b89', paddingVertical: 16, borderRadius: 12, alignItems: 'center' },
+    chatButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+    sectionTitle: { fontSize: 22, fontWeight: '600', marginHorizontal: 20, marginTop: 30, marginBottom: 10, color: '#1a1a1a' },
+    topicRow: { flexDirection: 'row', paddingHorizontal: 12, paddingBottom: 30 },
+    topicCard: { width: 90, height: 90, backgroundColor: '#fff', borderRadius: 12, margin: 8, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#133b89' },
+    topicLabel: { marginTop: 6, fontSize: 12, color: '#333', textAlign: 'center', paddingHorizontal: 4 },
+    profileImageContainer: { marginRight: 12, width: 40, height: 40, borderRadius: 20, position: 'relative', justifyContent: 'center', alignItems: 'center' },
+    profileImage: { width: 40, height: 40, borderRadius: 20 },
+    profilePlaceholder: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#ddd', justifyContent: 'center', alignItems: 'center' },
+    addIcon: { position: 'absolute', bottom: -4, right: -4, backgroundColor: '#fff', borderRadius: 10 },
+    eventRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
+    eventBox: { flexDirection: 'row', backgroundColor: '#f3f4f6', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, alignItems: 'center', flex: 1 },
+    eventText: { marginLeft: 6, fontSize: 12, color: '#333' },
+    plusBox: { backgroundColor: '#e0e7ff', width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
+    plusText: { color: '#133b89', fontSize: 16, fontWeight: 'bold' },
+    modalBox: { backgroundColor: '#fff', borderRadius: 12, padding: 20 },
+    modalTitle: { fontSize: 16, fontWeight: 'bold', color: '#133b89', marginBottom: 10, textAlign: 'center' },
+    modalEventBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', padding: 8, borderRadius: 8, marginBottom: 6 },
+    modalEventText: { marginLeft: 6, fontSize: 13, color: '#333' },
+    closeButton: { position: 'absolute', top: 10, right: 10 },
+    closeText: { fontSize: 18, color: '#888' },
 });
