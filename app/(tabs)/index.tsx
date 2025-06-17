@@ -129,13 +129,13 @@ const IndexScreen = () => {
                         <Text style={styles.calendarMonth}>{monthName}</Text>
                     </View>
                     <View style={styles.calendarBody}>
-                        <Text style={styles.calendarDayNumber}>{day}</Text>
-                        <Text style={styles.calendarWeekday}>{weekdayName}</Text>
+                        <Text style={styles.calendarDayNumberSmall}>{day}</Text>
+                        <Text style={styles.calendarWeekdaySmall}>{weekdayName}</Text>
                         {simulatedEvents.length > 0 && (
                             <View style={styles.eventRow}>
                                 <View style={styles.eventBox}>
                                     <Ionicons name="calendar-outline" size={14} color="#133b89" />
-                                    <Text style={styles.eventText} numberOfLines={1}>{simulatedEvents[0]}</Text>
+                                    <Text style={styles.eventText}>{simulatedEvents[0]}</Text>
                                 </View>
                                 {simulatedEvents.length > 1 && (
                                     <TouchableOpacity style={styles.plusBox} onPress={() => setShowAllEvents(true)}>
@@ -155,12 +155,7 @@ const IndexScreen = () => {
 
             <Text style={styles.sectionTitle}>Topics</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.topicRow}>
-                {[
-                    { label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> },
-                    { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#133b89" /> },
-                    { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#133b89" /> },
-                    { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#133b89" /> },
-                ].map((item, index) => (
+                {[{ label: 'International Office', icon: <FontAwesome5 name="globe" size={24} color="#133b89" /> }, { label: 'Career Services', icon: <MaterialIcons name="work" size={24} color="#133b89" /> }, { label: 'IT Services', icon: <MaterialIcons name="computer" size={24} color="#133b89" /> }, { label: "Registrar's Office", icon: <MaterialIcons name="description" size={24} color="#133b89" /> }].map((item, index) => (
                     <View key={index} style={styles.topicCard}>
                         {item.icon}
                         <Text style={styles.topicLabel}>{item.label}</Text>
@@ -205,9 +200,9 @@ const styles = StyleSheet.create({
     iosCalendarCard: { width: '45%', borderRadius: 12, backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 3, position: 'relative' },
     calendarHeader: { backgroundColor: '#f59e0b', paddingVertical: 8, alignItems: 'center' },
     calendarMonth: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-    calendarBody: { paddingVertical: 16, alignItems: 'center' },
-    calendarDayNumber: { fontSize: 42, fontWeight: 'bold', color: '#111' },
-    calendarWeekday: { fontSize: 18, color: '#f59e0b', fontWeight: '500' },
+    calendarBody: { paddingVertical: 12, alignItems: 'center' },
+    calendarDayNumberSmall: { fontSize: 28, fontWeight: 'bold', color: '#111' },
+    calendarWeekdaySmall: { fontSize: 14, color: '#f59e0b', fontWeight: '500' },
     chevron: { position: 'absolute', bottom: 10, right: 12, fontSize: 22, color: '#999' },
     chatButton: { marginTop: 20, marginHorizontal: 20, backgroundColor: '#133b89', paddingVertical: 16, borderRadius: 12, alignItems: 'center' },
     chatButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
@@ -219,7 +214,7 @@ const styles = StyleSheet.create({
     profileImage: { width: 40, height: 40, borderRadius: 20 },
     profilePlaceholder: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#ddd', justifyContent: 'center', alignItems: 'center' },
     addIcon: { position: 'absolute', bottom: -4, right: -4, backgroundColor: '#fff', borderRadius: 10 },
-    eventRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
+    eventRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10, marginHorizontal: 10 },
     eventBox: { flexDirection: 'row', backgroundColor: '#f3f4f6', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, alignItems: 'center', flex: 1 },
     eventText: { marginLeft: 6, fontSize: 12, color: '#333' },
     plusBox: { backgroundColor: '#e0e7ff', width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
