@@ -23,7 +23,7 @@ const IndexScreen = () => {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [simulatedEvents, setSimulatedEvents] = useState<string[]>([]);
-    const [showAllEvents, setShowAllEvents] = useState(false);
+    const [showAllEvents, setShowAllEvents] = useState<boolean>(false);
 
     const today = new Date();
     const year = today.getFullYear();
@@ -66,21 +66,17 @@ const IndexScreen = () => {
             quality: 1,
         });
 
-        if (!result.canceled) {
+        if (!result.canceled && result.assets) {
             setProfileImage(result.assets[0].uri);
         }
     };
 
     const handleProfilePress = () => {
-        Alert.alert(
-            "Profile Picture",
-            "Choose an option",
-            [
-                { text: "Change Photo", onPress: pickImage },
-                { text: "Remove Photo", onPress: () => setProfileImage(null) },
-                { text: "Cancel", style: "cancel" }
-            ]
-        );
+        Alert.alert("Profile Picture", "Choose an option", [
+            { text: "Change Photo", onPress: pickImage },
+            { text: "Remove Photo", onPress: () => setProfileImage(null) },
+            { text: "Cancel", style: "cancel" },
+        ]);
     };
 
     return (
@@ -132,20 +128,20 @@ const IndexScreen = () => {
                         <Text style={styles.calendarDayNumberSmall}>{day}</Text>
                         <Text style={styles.calendarWeekdaySmall}>{weekdayName}</Text>
                         {simulatedEvents.length > 0 && (
-                            <View style={styles.eventRow}>
+                            <View style={styles.eventBoxWrapper}>
                                 <View style={styles.eventBox}>
                                     <Ionicons name="calendar-outline" size={14} color="#133b89" />
-                                    <Text style={styles.eventText}>{simulatedEvents[0]}</Text>
+                                    <Text style={styles.eventText}>{simulatedEvents[0].split(' at ')[0]}</Text>
+                                    {simulatedEvents.length > 1 && (
+                                        <TouchableOpacity style={styles.plusBoxTopRight} onPress={() => setShowAllEvents(true)}>
+                                            <Text style={styles.plusText}>+</Text>
+                                        </TouchableOpacity>
+                                    )}
                                 </View>
-                                {simulatedEvents.length > 1 && (
-                                    <TouchableOpacity style={styles.plusBox} onPress={() => setShowAllEvents(true)}>
-                                        <Text style={styles.plusText}>+</Text>
-                                    </TouchableOpacity>
-                                )}
+                                <Text style={styles.chevronUnder}>›</Text>
                             </View>
                         )}
                     </View>
-                    <Text style={styles.chevron}>›</Text>
                 </TouchableOpacity>
             </View>
 
@@ -203,7 +199,6 @@ const styles = StyleSheet.create({
     calendarBody: { paddingVertical: 12, alignItems: 'center' },
     calendarDayNumberSmall: { fontSize: 28, fontWeight: 'bold', color: '#111' },
     calendarWeekdaySmall: { fontSize: 14, color: '#f59e0b', fontWeight: '500' },
-    chevron: { position: 'absolute', bottom: 10, right: 12, fontSize: 22, color: '#999' },
     chatButton: { marginTop: 20, marginHorizontal: 20, backgroundColor: '#133b89', paddingVertical: 16, borderRadius: 12, alignItems: 'center' },
     chatButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
     sectionTitle: { fontSize: 22, fontWeight: '600', marginHorizontal: 20, marginTop: 30, marginBottom: 10, color: '#1a1a1a' },
@@ -214,11 +209,12 @@ const styles = StyleSheet.create({
     profileImage: { width: 40, height: 40, borderRadius: 20 },
     profilePlaceholder: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#ddd', justifyContent: 'center', alignItems: 'center' },
     addIcon: { position: 'absolute', bottom: -4, right: -4, backgroundColor: '#fff', borderRadius: 10 },
-    eventRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10, marginHorizontal: 10 },
-    eventBox: { flexDirection: 'row', backgroundColor: '#f3f4f6', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, alignItems: 'center', flex: 1 },
-    eventText: { marginLeft: 6, fontSize: 12, color: '#333' },
-    plusBox: { backgroundColor: '#e0e7ff', width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
+    eventBoxWrapper: { marginTop: 10, marginHorizontal: 12, position: 'relative' },
+    eventBox: { flexDirection: 'row', backgroundColor: '#f3f4f6', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 10, alignItems: 'center', flexWrap: 'wrap', minWidth: '100%' },
+    eventText: { marginLeft: 6, fontSize: 12, color: '#333', flexShrink: 1, flex: 1 },
+    plusBoxTopRight: { position: 'absolute', top: -10, right: -10, backgroundColor: '#e0e7ff', width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', zIndex: 2 },
     plusText: { color: '#133b89', fontSize: 16, fontWeight: 'bold' },
+    chevronUnder: { textAlign: 'right', marginTop: 6, fontSize: 20, color: '#999' },
     modalBox: { backgroundColor: '#fff', borderRadius: 12, padding: 20 },
     modalTitle: { fontSize: 16, fontWeight: 'bold', color: '#133b89', marginBottom: 10, textAlign: 'center' },
     modalEventBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', padding: 8, borderRadius: 8, marginBottom: 6 },
