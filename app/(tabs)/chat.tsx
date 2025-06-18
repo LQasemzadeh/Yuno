@@ -41,7 +41,7 @@ export default function ChatScreen() {
             >
                 {/* Header: Arrow - Title - Menu */}
                 <View style={styles.headerRow}>
-                    <TouchableOpacity onPress={() => router.back()}>
+                    <TouchableOpacity onPress={() => router.replace('/(tabs)')}>
                         <Ionicons name="arrow-back" size={24} color="#333" />
                     </TouchableOpacity>
 
@@ -52,10 +52,9 @@ export default function ChatScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Spacer to push everything to bottom */}
+
                 <View style={{ flex: 1 }} />
 
-                {/* Topic buttons near input bar */}
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
