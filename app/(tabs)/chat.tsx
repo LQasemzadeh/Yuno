@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -23,6 +23,7 @@ const topics = [
 export default function ChatScreen() {
     const navigation = useNavigation();
     const router = useRouter();
+    const [input, setInput] = useState('');
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -42,19 +43,23 @@ export default function ChatScreen() {
                 <View style={styles.header}>
                     <FontAwesome5 name="robot" size={22} color="#333" style={{ marginRight: 8 }} />
                     <Text style={styles.headerText}>YUNO</Text>
-                    <Ionicons name="grid-outline" size={24} color="#333" style={{ marginLeft: 'auto' }} />
+                    <Ionicons name="menu-outline" size={28} color="#333" style={{ marginLeft: 'auto' }} />
                 </View>
 
                 <View style={{ flex: 1 }} />
 
-                {/* Topic buttons - now right above input */}
+                {/* Topic buttons - just above input */}
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.topicScroll}
                 >
                     {topics.map((item, index) => (
-                        <TouchableOpacity key={index} style={styles.topicButton}>
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.topicButton}
+                            onPress={() => setInput(`${item.title} ${item.subtitle}`)}
+                        >
                             <Text style={styles.topicTitle}>{item.title}</Text>
                             <Text style={styles.topicSubtitle}>{item.subtitle}</Text>
                         </TouchableOpacity>
@@ -71,6 +76,8 @@ export default function ChatScreen() {
                         style={styles.input}
                         placeholder="Ask YUNO"
                         placeholderTextColor="#777"
+                        value={input}
+                        onChangeText={setInput}
                     />
 
                     <TouchableOpacity>
@@ -108,7 +115,7 @@ const styles = StyleSheet.create({
     },
     topicButton: {
         backgroundColor: '#f2f2f2',
-        borderRadius: 16,
+        borderRadius: 20,
         paddingVertical: 6,
         paddingHorizontal: 12,
         marginRight: 8,
