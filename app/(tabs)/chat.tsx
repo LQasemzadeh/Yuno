@@ -8,8 +8,17 @@ import {
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
+    ScrollView,
 } from 'react-native';
 import { useNavigation, useRouter } from 'expo-router';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+
+const topics = [
+    { title: 'Tell me', subtitle: 'what you can do' },
+    { title: 'Help me', subtitle: 'find my class' },
+    { title: 'How can I', subtitle: 'connect to PFH WiFi' },
+    { title: 'Translate', subtitle: 'the text' },
+];
 
 export default function ChatScreen() {
     const navigation = useNavigation();
@@ -29,40 +38,43 @@ export default function ChatScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={80}
             >
-                {/* ✅ Back Arrow */}
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Text style={styles.backText}>←</Text>
-                </TouchableOpacity>
-
                 {/* Header */}
                 <View style={styles.header}>
+                    <FontAwesome5 name="robot" size={22} color="#333" style={{ marginRight: 8 }} />
                     <Text style={styles.headerText}>YUNO</Text>
+                    <Ionicons name="grid-outline" size={24} color="#333" style={{ marginLeft: 'auto' }} />
                 </View>
 
-                {/* Content area */}
-                <View style={styles.chatContent}>
-                    <View style={styles.messageBox}>
-                        <Text style={styles.botName}>YUNO</Text>
-                        <Text style={styles.botMessage}>
-                            Lost at PFH? Don’t worry, Yuno's got your back! How can I assist you?
-                        </Text>
-                    </View>
-                </View>
+                <View style={{ flex: 1 }} />
 
-                {/* Input bar */}
+                {/* Topic buttons - now right above input */}
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.topicScroll}
+                >
+                    {topics.map((item, index) => (
+                        <TouchableOpacity key={index} style={styles.topicButton}>
+                            <Text style={styles.topicTitle}>{item.title}</Text>
+                            <Text style={styles.topicSubtitle}>{item.subtitle}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+
+                {/* Input */}
                 <View style={styles.inputWrapper}>
-                    <TouchableOpacity style={styles.plusButton}>
+                    <TouchableOpacity style={styles.circleButton}>
                         <Text style={styles.plusText}>+</Text>
                     </TouchableOpacity>
 
                     <TextInput
                         style={styles.input}
-                        placeholder="Write your message"
-                        placeholderTextColor="#999"
+                        placeholder="Ask YUNO"
+                        placeholderTextColor="#777"
                     />
 
                     <TouchableOpacity>
-                        <Text style={styles.sendText}>📤</Text>
+                        <Ionicons name="mic-outline" size={22} color="#333" />
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -78,45 +90,45 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-    },
-    backButton: {
-        position: 'absolute',
-        top: 20,
-        left: 10,
-        zIndex: 10,
-        padding: 10,
-    },
-    backText: {
-        fontSize: 24,
-        color: '#133b89',
+        backgroundColor: '#fff',
     },
     header: {
-        paddingTop: 60,
+        flexDirection: 'row',
         alignItems: 'center',
+        paddingTop: 50,
+        paddingBottom: 10,
     },
     headerText: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: '#000',
-    },
-    chatContent: {
-        flex: 1,
-        paddingTop: 20,
-    },
-    messageBox: {
-        backgroundColor: '#f1f1f1',
-        borderRadius: 12,
-        padding: 15,
-        alignSelf: 'flex-start',
-    },
-    botName: {
-        fontWeight: 'bold',
-        marginBottom: 5,
         color: '#333',
     },
-    botMessage: {
-        fontSize: 16,
-        color: '#333',
+    topicScroll: {
+        paddingVertical: 8,
+    },
+    topicButton: {
+        backgroundColor: '#f2f2f2',
+        borderRadius: 16,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        marginRight: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minWidth: 100,
+        height: 50,
+    },
+    topicTitle: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#111',
+        textAlign: 'center',
+        lineHeight: 16,
+    },
+    topicSubtitle: {
+        fontSize: 11,
+        color: '#666',
+        textAlign: 'center',
+        lineHeight: 14,
     },
     inputWrapper: {
         flexDirection: 'row',
@@ -124,33 +136,30 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: Platform.OS === 'ios' ? 30 : 20,
         borderTopWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#eee',
+        paddingHorizontal: 10,
     },
-    plusButton: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#eee',
+    circleButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#e0e0e0',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
     },
     plusText: {
-        fontSize: 18,
+        fontSize: 20,
         color: '#555',
     },
     input: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#f2f2f2',
         borderRadius: 20,
-        paddingHorizontal: 15,
+        paddingHorizontal: 16,
         paddingVertical: 10,
         fontSize: 16,
         color: '#000',
-    },
-    sendText: {
-        fontSize: 20,
-        marginLeft: 10,
-        color: '#007AFF',
+        marginRight: 10,
     },
 });
