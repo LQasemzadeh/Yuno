@@ -11,7 +11,7 @@ import {
     ScrollView,
 } from 'react-native';
 import { useNavigation, useRouter } from 'expo-router';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 const topics = [
     { title: 'Tell me', subtitle: 'what you can do' },
@@ -39,16 +39,23 @@ export default function ChatScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={80}
             >
-                {/* Header */}
-                <View style={styles.header}>
-                    <FontAwesome5 name="robot" size={22} color="#333" style={{ marginRight: 8 }} />
-                    <Text style={styles.headerText}>YUNO</Text>
-                    <Ionicons name="menu-outline" size={28} color="#333" style={{ marginLeft: 'auto' }} />
+                {/* Header: Arrow - Title - Menu */}
+                <View style={styles.headerRow}>
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <Ionicons name="arrow-back" size={24} color="#333" />
+                    </TouchableOpacity>
+
+                    <Text style={styles.headerTitle}>YUNO</Text>
+
+                    <TouchableOpacity>
+                        <Ionicons name="menu-outline" size={28} color="#333" />
+                    </TouchableOpacity>
                 </View>
 
+                {/* Spacer to push everything to bottom */}
                 <View style={{ flex: 1 }} />
 
-                {/* Topic buttons - just above input */}
+                {/* Topic buttons near input bar */}
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -58,7 +65,7 @@ export default function ChatScreen() {
                         <TouchableOpacity
                             key={index}
                             style={styles.topicButton}
-                            onPress={() => setInput(`${item.title} ${item.subtitle}`)}
+                            onPress={() => setInput(item.subtitle)}
                         >
                             <Text style={styles.topicTitle}>{item.title}</Text>
                             <Text style={styles.topicSubtitle}>{item.subtitle}</Text>
@@ -66,7 +73,7 @@ export default function ChatScreen() {
                     ))}
                 </ScrollView>
 
-                {/* Input */}
+                {/* Input box */}
                 <View style={styles.inputWrapper}>
                     <TouchableOpacity style={styles.circleButton}>
                         <Text style={styles.plusText}>+</Text>
@@ -74,7 +81,7 @@ export default function ChatScreen() {
 
                     <TextInput
                         style={styles.input}
-                        placeholder="Ask YUNO"
+                        placeholder="Ask Yuno"
                         placeholderTextColor="#777"
                         value={input}
                         onChangeText={setInput}
@@ -99,20 +106,29 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         backgroundColor: '#fff',
     },
-    header: {
+
+    headerRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         paddingTop: 50,
         paddingBottom: 10,
     },
-    headerText: {
+
+    headerTitle: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        textAlign: 'center',
         fontSize: 22,
         fontWeight: 'bold',
         color: '#333',
     },
+
     topicScroll: {
         paddingVertical: 8,
     },
+
     topicButton: {
         backgroundColor: '#f2f2f2',
         borderRadius: 20,
@@ -124,6 +140,7 @@ const styles = StyleSheet.create({
         minWidth: 100,
         height: 50,
     },
+
     topicTitle: {
         fontSize: 13,
         fontWeight: '600',
@@ -131,12 +148,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         lineHeight: 16,
     },
+
     topicSubtitle: {
         fontSize: 11,
         color: '#666',
         textAlign: 'center',
         lineHeight: 14,
     },
+
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -146,6 +165,7 @@ const styles = StyleSheet.create({
         borderColor: '#eee',
         paddingHorizontal: 10,
     },
+
     circleButton: {
         width: 36,
         height: 36,
@@ -155,10 +175,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: 10,
     },
+
     plusText: {
         fontSize: 20,
         color: '#555',
     },
+
     input: {
         flex: 1,
         backgroundColor: '#f2f2f2',
