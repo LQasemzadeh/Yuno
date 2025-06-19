@@ -180,7 +180,7 @@ const IndexScreen = () => {
 export default IndexScreen;
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
+    container: { flex: 1, backgroundColor: '#fff', paddingTop: 20, },
     header: { marginTop: 50, marginHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     userRow: { flexDirection: 'row', alignItems: 'center' },
     languageIcon: { padding: 8 },
