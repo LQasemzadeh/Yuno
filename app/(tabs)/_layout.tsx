@@ -43,6 +43,17 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => (
                         <IconSymbol size={28} name="message.fill" color={color} />
                     ),
+                    tabBarStyle: { display: 'none' }, // ✅ Hide bottom tab bar on chat screen
+                }}
+            />
+
+            <Tabs.Screen
+                name="communities"
+                options={{
+                    title: 'Communities',
+                    tabBarIcon: ({ color }) => (
+                        <IconSymbol size={28} name="person.3.fill" color={color} />
+                    ),
                 }}
             />
 

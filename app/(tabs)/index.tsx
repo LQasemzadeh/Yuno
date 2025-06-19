@@ -123,6 +123,7 @@ const IndexScreen = () => {
                 <TouchableOpacity style={styles.iosCalendarCard} onPress={() => Linking.openURL(outlookURL)}>
                     <View style={styles.calendarHeader}>
                         <Text style={styles.calendarMonth}>{monthName}</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#fff" style={styles.calendarChevron} />
                     </View>
                     <View style={styles.calendarBody}>
                         <Text style={styles.calendarDayNumberSmall}>{day}</Text>
@@ -138,7 +139,6 @@ const IndexScreen = () => {
                                         </TouchableOpacity>
                                     )}
                                 </View>
-                                <Text style={styles.chevronUnder}>›</Text>
                             </View>
                         )}
                     </View>
@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
     cardLabel: { marginTop: 10, fontSize: 14, color: '#333' },
     iosCalendarCard: { width: '45%', borderRadius: 12, backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 3, position: 'relative' },
     calendarHeader: { backgroundColor: '#f59e0b', paddingVertical: 8, alignItems: 'center' },
+    calendarChevron: { position: 'absolute', right: 10, top: 8, },
     calendarMonth: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
     calendarBody: { paddingVertical: 12, alignItems: 'center' },
     calendarDayNumberSmall: { fontSize: 28, fontWeight: 'bold', color: '#111' },
@@ -214,7 +215,6 @@ const styles = StyleSheet.create({
     eventText: { marginLeft: 6, fontSize: 12, color: '#333', flexShrink: 1, flex: 1 },
     plusBoxTopRight: { position: 'absolute', top: -10, right: -10, backgroundColor: '#e0e7ff', width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', zIndex: 2 },
     plusText: { color: '#133b89', fontSize: 16, fontWeight: 'bold' },
-    chevronUnder: { textAlign: 'right', marginTop: 6, fontSize: 20, color: '#999' },
     modalBox: { backgroundColor: '#fff', borderRadius: 12, padding: 20 },
     modalTitle: { fontSize: 16, fontWeight: 'bold', color: '#133b89', marginBottom: 10, textAlign: 'center' },
     modalEventBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', padding: 8, borderRadius: 8, marginBottom: 6 },
