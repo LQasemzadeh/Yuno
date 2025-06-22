@@ -108,19 +108,11 @@ const ChatScreen: React.FC = () => {
                 >
                     <View style={styles.contentContainer}>
                         <View style={styles.header}>
-                            <TouchableOpacity
-                                onPress={() => router.replace('/(tabs)')}
-                                accessibilityLabel="Go back"
-                                accessibilityRole="button"
-                            >
+                            <TouchableOpacity onPress={() => router.replace('/(tabs)')}>
                                 <Ionicons name="arrow-back" size={24} color="black" />
                             </TouchableOpacity>
                             <Text style={styles.headerText}>YUNO</Text>
-                            <TouchableOpacity
-                                onPress={toggleDrawer}
-                                accessibilityLabel="Toggle history drawer"
-                                accessibilityRole="button"
-                            >
+                            <TouchableOpacity onPress={toggleDrawer}>
                                 <Ionicons name="menu" size={24} color="black" />
                             </TouchableOpacity>
                         </View>
@@ -139,8 +131,6 @@ const ChatScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.topicButton}
                                             onPress={() => handleTopicPress(item)}
-                                            accessibilityLabel={`${item.title} ${item.subtitle}`}
-                                            accessibilityRole="button"
                                         >
                                             <Text style={styles.topicTitle}>{item.title}</Text>
                                             <Text style={styles.topicSubtitle}>{item.subtitle}</Text>
@@ -149,14 +139,13 @@ const ChatScreen: React.FC = () => {
                                 />
                             </View>
 
-                            <View style={styles.inputContainer}>
+                            {/* New ChatGPT-style input bar */}
+                            <View style={styles.inputBarContainer}>
                                 <View style={styles.inputBar}>
-                                    <TouchableOpacity
-                                        accessibilityLabel="Add attachment"
-                                        accessibilityRole="button"
-                                    >
+                                    <TouchableOpacity>
                                         <MaterialIcons name="add" size={24} color="gray" />
                                     </TouchableOpacity>
+
                                     <TextInput
                                         ref={inputRef}
                                         style={styles.input}
@@ -166,20 +155,16 @@ const ChatScreen: React.FC = () => {
                                         onChangeText={setMessage}
                                         onSubmitEditing={handleSend}
                                         editable={!isLoading}
-                                        multiline={true}
-                                        textAlignVertical="top"
+                                        multiline
                                     />
-                                    <TouchableOpacity
-                                        accessibilityLabel="Voice input"
-                                        accessibilityRole="button"
-                                    >
+
+                                    <TouchableOpacity>
                                         <Ionicons name="mic" size={24} color="gray" />
                                     </TouchableOpacity>
+
                                     <TouchableOpacity
                                         onPress={handleSend}
                                         disabled={!message.trim() || isLoading}
-                                        accessibilityLabel="Send message"
-                                        accessibilityRole="button"
                                     >
                                         <Ionicons
                                             name="send"
@@ -200,10 +185,7 @@ const ChatScreen: React.FC = () => {
                                 <Text style={styles.drawerTitle}>
                                     Chat history <Text style={styles.historyCount}>(496)</Text>
                                 </Text>
-                                <TouchableOpacity
-                                    accessibilityLabel="Clear history"
-                                    accessibilityRole="button"
-                                >
+                                <TouchableOpacity>
                                     <Ionicons name="trash-outline" size={20} color="#888" />
                                 </TouchableOpacity>
                             </View>
@@ -260,7 +242,34 @@ const styles = StyleSheet.create({
     },
     bottomSection: {
         marginTop: 'auto',
-        paddingBottom: Platform.OS === 'ios' ? 10 : 5,
+        paddingBottom: Platform.OS === 'ios' ? 8 : 10,
+    },
+    inputBarContainer: {
+        paddingHorizontal: 10,
+        paddingBottom: Platform.OS === 'ios' ? 8 : 10,
+        backgroundColor: '#fff',
+    },
+    inputBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f1f1f1',
+        borderRadius: 30,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        minHeight: 50,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: -1 },
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    input: {
+        flex: 1,
+        fontSize: 16,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        color: '#000',
+        maxHeight: 100,
     },
     header: {
         flexDirection: 'row',
@@ -276,7 +285,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     topicContainer: {
-        marginBottom: 16,
+        marginBottom: 12,
     },
     topicList: {
         paddingVertical: 8,
@@ -298,30 +307,6 @@ const styles = StyleSheet.create({
     topicSubtitle: {
         fontSize: 11,
         color: '#666',
-    },
-    inputContainer: {
-        marginBottom: Platform.OS === 'ios' ? 20 : 10,
-    },
-    inputBar: {
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        backgroundColor: '#f2f2f2',
-        borderRadius: 30,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        minHeight: 60,
-        maxHeight: 120,
-        gap: 10,
-    },
-    input: {
-        flex: 1,
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingTop: 8,
-        paddingBottom: 8,
-        minHeight: 40,
-        maxHeight: 100,
-        color: '#000',
     },
     overlay: {
         position: 'absolute',
