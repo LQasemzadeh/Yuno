@@ -12,7 +12,7 @@ import {
     Dimensions,
     Pressable,
     ScrollView,
-    AccessibilityRole,
+    SafeAreaView,
 } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -54,7 +54,6 @@ const ChatScreen: React.FC = () => {
 
     const toggleDrawer = () => {
         const toValue = drawerVisible ? screenWidth : screenWidth - drawerWidth;
-
         Animated.timing(drawerAnim, {
             toValue,
             duration: 300,
@@ -72,10 +71,8 @@ const ChatScreen: React.FC = () => {
 
     const handleSend = async () => {
         if (!message.trim() || isLoading) return;
-
         try {
             setIsLoading(true);
-            // Implement your message sending logic here
             setMessage('');
         } catch (error) {
             console.error('Failed to send message:', error);
@@ -93,7 +90,7 @@ const ChatScreen: React.FC = () => {
             Array(20).fill(null).map((_, index) => ({
                 id: `history-${index}`,
                 title: index % 2 === 0
-                    ? 'translate to english: ممنون بابت پیگیری آن را پیدا کردم'
+                    ? 'translate to english: Thank you for following up'
                     : 'correct it: Dear Stefanie, Hope you are great.',
                 preview: index % 2 === 0
                     ? 'The correct translation is: **"Thank you for following up..."'
@@ -102,155 +99,175 @@ const ChatScreen: React.FC = () => {
         []);
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            style={styles.container}
-        >
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.replace('/(tabs)')}
-                    accessibilityLabel="Go back"
-                    accessibilityRole="button"
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.mainContainer}>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                    style={styles.keyboardAvoidingView}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
                 >
-                    <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.headerText}>YUNO</Text>
-                <TouchableOpacity
-                    onPress={toggleDrawer}
-                    accessibilityLabel="Toggle history drawer"
-                    accessibilityRole="button"
-                >
-                    <Ionicons name="menu" size={24} color="black" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.chatArea} />
-
-            <View style={styles.topicContainer}>
-                <FlatList
-                    horizontal
-                    data={topics}
-                    keyExtractor={(item) => item.title}
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.topicList}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.topicButton}
-                            onPress={() => handleTopicPress(item)}
-                            accessibilityLabel={`${item.title} ${item.subtitle}`}
-                            accessibilityRole="button"
-                        >
-                            <Text style={styles.topicTitle}>{item.title}</Text>
-                            <Text style={styles.topicSubtitle}>{item.subtitle}</Text>
-                        </TouchableOpacity>
-                    )}
-                />
-            </View>
-
-            <View style={styles.inputBar}>
-                <TouchableOpacity
-                    accessibilityLabel="Add attachment"
-                    accessibilityRole="button"
-                >
-                    <MaterialIcons name="add" size={24} color="gray" />
-                </TouchableOpacity>
-                <TextInput
-                    ref={inputRef}
-                    style={styles.input}
-                    placeholder="Ask anything"
-                    placeholderTextColor="#888"
-                    value={message}
-                    onChangeText={setMessage}
-                    onSubmitEditing={handleSend}
-                    editable={!isLoading}
-                />
-                <TouchableOpacity
-                    accessibilityLabel="Voice input"
-                    accessibilityRole="button"
-                >
-                    <Ionicons name="mic" size={24} color="gray" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={handleSend}
-                    disabled={!message.trim() || isLoading}
-                    accessibilityLabel="Send message"
-                    accessibilityRole="button"
-                >
-                    <Ionicons
-                        name="send"
-                        size={24}
-                        color={message.trim() && !isLoading ? "#007AFF" : "gray"}
-                    />
-                </TouchableOpacity>
-            </View>
-
-            {drawerVisible && (
-                <Pressable style={styles.overlay} onPress={toggleDrawer}>
-                    <Animated.View style={[styles.drawer, { left: drawerAnim }]}>
-                        <View style={styles.drawerHeader}>
-                            <Text style={styles.drawerTitle}>
-                                Chat history <Text style={styles.historyCount}>(496)</Text>
-                            </Text>
+                    <View style={styles.contentContainer}>
+                        <View style={styles.header}>
                             <TouchableOpacity
-                                accessibilityLabel="Clear history"
+                                onPress={() => router.replace('/(tabs)')}
+                                accessibilityLabel="Go back"
                                 accessibilityRole="button"
                             >
-                                <Ionicons name="trash-outline" size={20} color="#888" />
+                                <Ionicons name="arrow-back" size={24} color="black" />
+                            </TouchableOpacity>
+                            <Text style={styles.headerText}>YUNO</Text>
+                            <TouchableOpacity
+                                onPress={toggleDrawer}
+                                accessibilityLabel="Toggle history drawer"
+                                accessibilityRole="button"
+                            >
+                                <Ionicons name="menu" size={24} color="black" />
                             </TouchableOpacity>
                         </View>
 
-                        <View style={styles.tabRow}>
-                            <Text style={[styles.tabItem, styles.activeTab]}>All</Text>
-                            <Text style={styles.tabItem}>Starred</Text>
-                        </View>
+                        <View style={styles.chatArea} />
 
-                        <View style={styles.searchBox}>
-                            <Ionicons name="search" size={16} color="#888" style={styles.searchIcon} />
-                            <TextInput
-                                placeholder="Search"
-                                style={styles.searchInput}
-                                placeholderTextColor="#888"
-                            />
-                        </View>
+                        <View style={styles.bottomSection}>
+                            <View style={styles.topicContainer}>
+                                <FlatList
+                                    horizontal
+                                    data={topics}
+                                    keyExtractor={(item) => item.title}
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={styles.topicList}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            style={styles.topicButton}
+                                            onPress={() => handleTopicPress(item)}
+                                            accessibilityLabel={`${item.title} ${item.subtitle}`}
+                                            accessibilityRole="button"
+                                        >
+                                            <Text style={styles.topicTitle}>{item.title}</Text>
+                                            <Text style={styles.topicSubtitle}>{item.subtitle}</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+                            </View>
 
-                        <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={true}>
-                            <Text style={styles.earlierLabel}>Earlier</Text>
-                            {historyItems.map((item) => (
-                                <View key={item.id} style={styles.historyItemBox}>
-                                    <Text style={styles.historyTitle}>{item.title}</Text>
-                                    <Text style={styles.historyPreview}>{item.preview}</Text>
+                            <View style={styles.inputContainer}>
+                                <View style={styles.inputBar}>
+                                    <TouchableOpacity
+                                        accessibilityLabel="Add attachment"
+                                        accessibilityRole="button"
+                                    >
+                                        <MaterialIcons name="add" size={24} color="gray" />
+                                    </TouchableOpacity>
+                                    <TextInput
+                                        ref={inputRef}
+                                        style={styles.input}
+                                        placeholder="Ask anything"
+                                        placeholderTextColor="#888"
+                                        value={message}
+                                        onChangeText={setMessage}
+                                        onSubmitEditing={handleSend}
+                                        editable={!isLoading}
+                                        multiline={true}
+                                        textAlignVertical="top"
+                                    />
+                                    <TouchableOpacity
+                                        accessibilityLabel="Voice input"
+                                        accessibilityRole="button"
+                                    >
+                                        <Ionicons name="mic" size={24} color="gray" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={handleSend}
+                                        disabled={!message.trim() || isLoading}
+                                        accessibilityLabel="Send message"
+                                        accessibilityRole="button"
+                                    >
+                                        <Ionicons
+                                            name="send"
+                                            size={24}
+                                            color={message.trim() && !isLoading ? "#007AFF" : "gray"}
+                                        />
+                                    </TouchableOpacity>
                                 </View>
-                            ))}
-                        </ScrollView>
-                    </Animated.View>
-                </Pressable>
-            )}
-        </KeyboardAvoidingView>
+                            </View>
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+
+                {drawerVisible && (
+                    <Pressable style={styles.overlay} onPress={toggleDrawer}>
+                        <Animated.View style={[styles.drawer, { left: drawerAnim }]}>
+                            <View style={styles.drawerHeader}>
+                                <Text style={styles.drawerTitle}>
+                                    Chat history <Text style={styles.historyCount}>(496)</Text>
+                                </Text>
+                                <TouchableOpacity
+                                    accessibilityLabel="Clear history"
+                                    accessibilityRole="button"
+                                >
+                                    <Ionicons name="trash-outline" size={20} color="#888" />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.tabRow}>
+                                <Text style={[styles.tabItem, styles.activeTab]}>All</Text>
+                                <Text style={styles.tabItem}>Starred</Text>
+                            </View>
+
+                            <View style={styles.searchBox}>
+                                <Ionicons name="search" size={16} color="#888" style={styles.searchIcon} />
+                                <TextInput
+                                    placeholder="Search"
+                                    style={styles.searchInput}
+                                    placeholderTextColor="#888"
+                                />
+                            </View>
+
+                            <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={true}>
+                                <Text style={styles.earlierLabel}>Earlier</Text>
+                                {historyItems.map((item) => (
+                                    <View key={item.id} style={styles.historyItemBox}>
+                                        <Text style={styles.historyTitle}>{item.title}</Text>
+                                        <Text style={styles.historyPreview}>{item.preview}</Text>
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        </Animated.View>
+                    </Pressable>
+                )}
+            </View>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    keyboardAvoidingView: {
+        flex: 1,
+    },
+    contentContainer: {
+        flex: 1,
         paddingHorizontal: 16,
-        paddingTop: 60,
     },
     chatArea: {
         flex: 1,
     },
-    topicContainer: {
-        marginBottom: 10,
-    },
-    topicList: {
-        paddingBottom: 6,
-        paddingTop: 8,
+    bottomSection: {
+        marginTop: 'auto',
+        paddingBottom: Platform.OS === 'ios' ? 10 : 5,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 16,
+        paddingTop: Platform.OS === 'ios' ? 20 : 10,
     },
     headerText: {
         fontSize: 18,
@@ -258,10 +275,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         flex: 1,
     },
+    topicContainer: {
+        marginBottom: 16,
+    },
+    topicList: {
+        paddingVertical: 8,
+    },
     topicButton: {
         backgroundColor: '#f2f2f2',
-        borderRadius: 20,
-        paddingVertical: 4,
+        borderRadius: 5,
+        paddingVertical: 10,
         paddingHorizontal: 14,
         marginRight: 8,
         height: 36,
@@ -276,20 +299,28 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#666',
     },
+    inputContainer: {
+        marginBottom: Platform.OS === 'ios' ? 20 : 10,
+    },
     inputBar: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         backgroundColor: '#f2f2f2',
         borderRadius: 30,
         paddingHorizontal: 12,
-        paddingVertical: 10,
-        marginBottom: 20,
+        paddingVertical: 8,
+        minHeight: 60,
+        maxHeight: 120,
         gap: 10,
     },
     input: {
         flex: 1,
         fontSize: 16,
         paddingHorizontal: 10,
+        paddingTop: 8,
+        paddingBottom: 8,
+        minHeight: 40,
+        maxHeight: 100,
         color: '#000',
     },
     overlay: {
