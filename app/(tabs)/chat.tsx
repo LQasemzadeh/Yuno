@@ -113,7 +113,7 @@ const ChatScreen: React.FC = () => {
                             </TouchableOpacity>
                             <Text style={styles.headerText}>YUNO</Text>
                             <TouchableOpacity onPress={toggleDrawer}>
-                                <Ionicons name="menu" size={24} color="black" />
+                                <Ionicons name="ellipsis-vertical" size={24} color="black" />
                             </TouchableOpacity>
                         </View>
 
