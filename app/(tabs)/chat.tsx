@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     Text,
@@ -10,22 +10,23 @@ import {
     Platform,
     Animated,
     Dimensions,
-    Pressable,
     ScrollView,
     SafeAreaView,
+    Image,
 } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { askChatGPT } from '../../hooks/useChatGPT';
+
+interface Message {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+}
 
 interface Topic {
     title: string;
     subtitle: string;
-}
-
-interface HistoryItem {
-    id: string;
-    title: string;
-    preview: string;
 }
 
 const topics: Topic[] = [
@@ -40,17 +41,24 @@ const drawerWidth = screenWidth * 0.8;
 
 const ChatScreen: React.FC = () => {
     const [message, setMessage] = useState<string>('');
+    const [messages, setMessages] = useState<Message[]>([]);
     const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [streamedText, setStreamedText] = useState<string>('');
     const drawerAnim = useRef(new Animated.Value(screenWidth)).current;
     const router = useRouter();
     const inputRef = useRef<TextInput>(null);
+    const scrollViewRef = useRef<ScrollView>(null);
 
     useEffect(() => {
         return () => {
             drawerAnim.setValue(screenWidth);
         };
     }, []);
+
+    useEffect(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, [messages, streamedText]);
 
     const toggleDrawer = () => {
         const toValue = drawerVisible ? screenWidth : screenWidth - drawerWidth;
@@ -71,9 +79,28 @@ const ChatScreen: React.FC = () => {
 
     const handleSend = async () => {
         if (!message.trim() || isLoading) return;
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            role: 'user',
+            content: message.trim(),
+        };
+        setMessages((prev) => [...prev, userMessage]);
+        setMessage('');
         try {
             setIsLoading(true);
-            setMessage('');
+            setStreamedText('');
+
+            const reply = await askChatGPT(userMessage.content, (chunk: string) => {
+                setStreamedText((prev) => prev + chunk);
+            });
+
+            const botMessage: Message = {
+                id: Date.now().toString() + '-bot',
+                role: 'assistant',
+                content: reply,
+            };
+            setMessages((prev) => [...prev, botMessage]);
+            setStreamedText('');
         } catch (error) {
             console.error('Failed to send message:', error);
         } finally {
@@ -85,18 +112,6 @@ const ChatScreen: React.FC = () => {
         setMessage(topic.title + ' ' + topic.subtitle);
         inputRef.current?.focus();
     };
-
-    const historyItems = useMemo<HistoryItem[]>(() =>
-            Array(20).fill(null).map((_, index) => ({
-                id: `history-${index}`,
-                title: index % 2 === 0
-                    ? 'translate to english: Thank you for following up'
-                    : 'correct it: Dear Stefanie, Hope you are great.',
-                preview: index % 2 === 0
-                    ? 'The correct translation is: **"Thank you for following up..."'
-                    : "Here's a corrected version of your message..."
-            })),
-        []);
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -117,7 +132,73 @@ const ChatScreen: React.FC = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={styles.chatArea} />
+                        <View style={styles.chatArea}>
+                            <ScrollView
+                                contentContainerStyle={{ paddingVertical: 10 }}
+                                ref={scrollViewRef}
+                            >
+                                {messages.map((msg) => (
+                                    <View
+                                        key={msg.id}
+                                        style={{
+                                            flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
+                                            alignItems: 'flex-end',
+                                            marginVertical: 4,
+                                            marginHorizontal: 8,
+                                        }}
+                                    >
+                                        <Image
+                                            source={{
+                                                uri: msg.role === 'user'
+                                                    ? 'https://i.pravatar.cc/40?u=user'
+                                                    : 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png',
+                                            }}
+                                            style={{
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 16,
+                                                marginHorizontal: 6,
+                                            }}
+                                        />
+                                        <View
+                                            style={{
+                                                backgroundColor: msg.role === 'user' ? '#DCF8C6' : '#EAEAEA',
+                                                padding: 10,
+                                                borderRadius: 12,
+                                                maxWidth: '75%',
+                                            }}
+                                        >
+                                            <Text style={{ color: '#000' }}>{msg.content}</Text>
+                                        </View>
+                                    </View>
+                                ))}
+                                {isLoading && (
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'flex-end',
+                                            marginLeft: 16,
+                                            marginTop: 4,
+                                        }}
+                                    >
+                                        <Image
+                                            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png' }}
+                                            style={{ width: 32, height: 32, borderRadius: 16, marginRight: 6 }}
+                                        />
+                                        <View
+                                            style={{
+                                                backgroundColor: '#EAEAEA',
+                                                padding: 10,
+                                                borderRadius: 12,
+                                                maxWidth: '75%',
+                                            }}
+                                        >
+                                            <Text style={{ color: '#666' }}>{streamedText || 'YUNO is typing...'}</Text>
+                                        </View>
+                                    </View>
+                                )}
+                            </ScrollView>
+                        </View>
 
                         <View style={styles.bottomSection}>
                             <View style={styles.topicContainer}>
@@ -139,7 +220,6 @@ const ChatScreen: React.FC = () => {
                                 />
                             </View>
 
-                            {/* New ChatGPT-style input bar */}
                             <View style={styles.inputBarContainer}>
                                 <View style={styles.inputBar}>
                                     <TouchableOpacity>
@@ -177,45 +257,6 @@ const ChatScreen: React.FC = () => {
                         </View>
                     </View>
                 </KeyboardAvoidingView>
-
-                {drawerVisible && (
-                    <Pressable style={styles.overlay} onPress={toggleDrawer}>
-                        <Animated.View style={[styles.drawer, { left: drawerAnim }]}>
-                            <View style={styles.drawerHeader}>
-                                <Text style={styles.drawerTitle}>
-                                    Chat history <Text style={styles.historyCount}>(496)</Text>
-                                </Text>
-                                <TouchableOpacity>
-                                    <Ionicons name="trash-outline" size={20} color="#888" />
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={styles.tabRow}>
-                                <Text style={[styles.tabItem, styles.activeTab]}>All</Text>
-                                <Text style={styles.tabItem}>Starred</Text>
-                            </View>
-
-                            <View style={styles.searchBox}>
-                                <Ionicons name="search" size={16} color="#888" style={styles.searchIcon} />
-                                <TextInput
-                                    placeholder="Search"
-                                    style={styles.searchInput}
-                                    placeholderTextColor="#888"
-                                />
-                            </View>
-
-                            <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={true}>
-                                <Text style={styles.earlierLabel}>Earlier</Text>
-                                {historyItems.map((item) => (
-                                    <View key={item.id} style={styles.historyItemBox}>
-                                        <Text style={styles.historyTitle}>{item.title}</Text>
-                                        <Text style={styles.historyPreview}>{item.preview}</Text>
-                                    </View>
-                                ))}
-                            </ScrollView>
-                        </Animated.View>
-                    </Pressable>
-                )}
             </View>
         </SafeAreaView>
     );
@@ -307,94 +348,6 @@ const styles = StyleSheet.create({
     topicSubtitle: {
         fontSize: 11,
         color: '#666',
-    },
-    overlay: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-    },
-    drawer: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        width: drawerWidth,
-        backgroundColor: '#fff',
-        paddingTop: 40,
-        paddingHorizontal: 20,
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowOffset: { width: -2, height: 0 },
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    drawerHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    drawerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    historyCount: {
-        color: '#888',
-    },
-    tabRow: {
-        flexDirection: 'row',
-        gap: 20,
-        marginBottom: 12,
-    },
-    tabItem: {
-        fontSize: 14,
-        color: '#888',
-    },
-    activeTab: {
-        color: '#000',
-        fontWeight: 'bold',
-        borderBottomWidth: 2,
-        borderBottomColor: '#000',
-        paddingBottom: 2,
-    },
-    searchBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f2f2f2',
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        height: 36,
-    },
-    searchIcon: {
-        marginRight: 8,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 14,
-        color: '#000',
-    },
-    scrollArea: {
-        marginTop: 16,
-    },
-    earlierLabel: {
-        fontSize: 12,
-        color: '#888',
-        marginBottom: 10,
-    },
-    historyItemBox: {
-        marginBottom: 16,
-    },
-    historyTitle: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#111',
-    },
-    historyPreview: {
-        fontSize: 13,
-        color: '#777',
-        marginTop: 2,
     },
 });
 
