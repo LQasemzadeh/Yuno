@@ -1,4 +1,3 @@
-// hooks/useChatGPT.ts
 import Constants from 'expo-constants';
 
 const OPENAI_API_KEY = Constants.expoConfig?.extra?.OPENAI_API_KEY;
@@ -24,15 +23,20 @@ export const askChatGPT = async (
 
         if (!onStream) {
             const data = await response.json();
-            return data.choices[0].message.content;
+            return data.choices?.[0]?.message?.content ?? 'No response';
         }
 
-        const reader = response.body?.getReader();
+        if (!response.ok || !response.body) {
+            const errorText = await response.text();
+            throw new Error(`OpenAI error: ${errorText}`);
+        }
+
+        const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let fullResponse = '';
 
         while (true) {
-            const { done, value } = await reader!.read();
+            const { done, value } = await reader.read();
             if (done) break;
 
             const chunk = decoder.decode(value, { stream: true });
